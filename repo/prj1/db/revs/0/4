@@ -1,0 +1,72 @@
+id: 1-4.0.r4/0
+type: dir
+count: 0
+cpath: /branches/DEV
+copyroot: 0 /
+
+id: 3-4.0.r4/70
+type: dir
+count: 0
+cpath: /branches/PRODUCTION
+copyroot: 0 /
+
+id: 4-4.0.r4/148
+type: dir
+count: 0
+cpath: /branches/STAGING
+copyroot: 0 /
+
+PLAIN
+K 3
+DEV
+V 14
+dir 1-4.0.r4/0
+K 10
+PRODUCTION
+V 15
+dir 3-4.0.r4/70
+K 7
+STAGING
+V 16
+dir 4-4.0.r4/148
+END
+ENDREP
+id: 0-1.0.r4/340
+type: dir
+pred: 0-1.0.r1/0
+count: 1
+text: 4 224 103 0 e28fd71e1db4bba5634e94a0853e7757
+cpath: /branches
+copyroot: 0 /
+
+PLAIN
+K 8
+branches
+V 16
+dir 0-1.0.r4/340
+K 4
+tags
+V 15
+dir 2-1.0.r1/66
+K 5
+trunk
+V 16
+dir 3-1.0.r3/910
+END
+ENDREP
+id: 0.0.r4/590
+type: dir
+pred: 0.0.r3/1156
+count: 4
+text: 4 476 101 0 38fc4e57cae2ab853aec7c6cf014d874
+cpath: /
+copyroot: 0 /
+
+_1.0.t3-3 add-dir false false /branches/DEV
+
+_3.0.t3-3 add-dir false false /branches/PRODUCTION
+
+_4.0.t3-3 add-dir false false /branches/STAGING
+
+
+590 717
