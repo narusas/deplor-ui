@@ -65,6 +65,11 @@ compileJava {
 
 
 
+/**
+ *  
+ * Flyway 
+ */
+apply plugin: 'flyway'
 
 def FLYWAY_CONFIG = [
 	url: 'jdbc:mysql://localhost:8889/deplor?useUnicode=true&characterEncoding=utf8'
