@@ -22,7 +22,7 @@ import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
-@EnableJpaRepositories(value = { "net.narusas.tools.deplor.model" })
+@EnableJpaRepositories(basePackages = "net.narusas.tools.deplor")
 public class JpaConfig {
 	@Autowired
 	DataSource	dataSource;

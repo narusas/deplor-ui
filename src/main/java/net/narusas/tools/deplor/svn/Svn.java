@@ -330,4 +330,12 @@ public class Svn {
 		System.out.println(deletResource);
 		svnClientManager.getCommitClient().doDelete(new SVNURL[] { deletResource }, "DELETED");
 	}
+
+	public long headRevision() {
+		try {
+			return repository.getLatestRevision();
+		} catch (SVNException e) {
+			throw new IllegalStateException(e);
+		}
+	}
 }
