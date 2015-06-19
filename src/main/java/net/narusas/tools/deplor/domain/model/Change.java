@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.EqualsAndHashCode;
@@ -15,26 +16,34 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "resources")
+@Table(name = "changes")
+@NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(exclude={"repository"})
-@ToString(exclude={"repository"})
-@NoArgsConstructor
-public class Resource {
+@EqualsAndHashCode(exclude = { "revision", "resource" })
+@ToString(exclude = { "revision", "resource" })
+public class Change {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long		id;
 
-	@JoinColumn(name = "repository")
-	Repository	repository;
+	@JoinColumn(name = "REVISION")
+	Revision	revision;
+
+	@Column
+	String		type;
 
 	@Column
 	String		path;
 
-	public Resource(Repository repo, String shortPath) {
-		repository = repo;
-		path = shortPath;
+	@JoinColumn(name = "resource")
+	Resource	resource;
+
+	public Change(Resource resource, String path, String type) {
+		this.resource = resource;
+		this.path = path;
+		this.type = type;
 	}
 
 }
