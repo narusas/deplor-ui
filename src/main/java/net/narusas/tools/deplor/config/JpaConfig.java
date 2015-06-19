@@ -88,7 +88,7 @@ public class JpaConfig {
 	public javax.sql.DataSource dataSource() {
 		org.apache.tomcat.jdbc.pool.DataSource ds = new org.apache.tomcat.jdbc.pool.DataSource();
 		ds.setDriverClassName("com.mysql.jdbc.Driver");
-		ds.setUrl("jdbc:mysql://localhost:8889/deplor?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull");
+		ds.setUrl("jdbc:mysql://localhost:3306/deplor?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull");
 		ds.setUsername("deplor");
 		ds.setPassword("deplor");
 		ds.setInitSQL("select 1");
