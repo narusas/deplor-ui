@@ -5,5 +5,6 @@
  - DB: deplor ID: deplor PW: deplor 생성
 
   ./gradlew eclipse
+
   ./gradlew flywayClean flywayBaseline flywayMigrate
-  
+ 
