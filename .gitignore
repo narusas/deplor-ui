@@ -4,6 +4,10 @@
 .mtj.tmp/
 bin
 build
+.classpath
+.gradle
+.settings
+.project
 
 # Package Files #
 *.war
