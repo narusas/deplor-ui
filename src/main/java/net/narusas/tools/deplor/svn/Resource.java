@@ -29,9 +29,9 @@ public class Resource implements Comparable<Resource> {
 
 	public boolean isConflict() {
 		for (Change change : changes) {
-			if (change.isBroken()) {
-				return true;
-			}
+//			if (change.isBroken()) {
+//				return true;
+//			}
 		}
 		return changes.size() > 1;
 	}
