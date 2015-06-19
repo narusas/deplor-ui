@@ -7,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -21,6 +20,7 @@ import org.tmatesoft.svn.core.SVNCommitInfo;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
+import org.tmatesoft.svn.core.SVNLogEntry;
 import org.tmatesoft.svn.core.SVNNodeKind;
 import org.tmatesoft.svn.core.SVNProperties;
 import org.tmatesoft.svn.core.SVNURL;
@@ -336,6 +336,14 @@ public class Svn {
 			return repository.getLatestRevision();
 		} catch (SVNException e) {
 			throw new IllegalStateException(e);
+		}
+	}
+
+	public Collection<SVNLogEntry> logs(String branch, long lastRevision) {
+		try {
+			return repository.log(new String[] { "/" + branch }, null, lastRevision, -1, true, true);
+		} catch (SVNException e) {
+			throw new IllegalArgumentException(e);
 		}
 	}
 }
