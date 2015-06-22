@@ -6,12 +6,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
-import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.AbstractListModel;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -27,6 +24,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
@@ -37,35 +35,40 @@ public class DeporGUIFrame extends JFrame {
     private JTextField loginId;
     private JTextField loginPass;
     private JTable revListTable;
-    private JTable detailInfo;
     private JTable requestListtable;
+
+    private DeplorController dController;
+    private JTextField RevDetailTime;
+    private JTextField RevDetailOwner;
 
 
     /**
      * Launch the application.
+     * 
+     * For GUI
      */
-    public static void main(String[] args) {
-
-        EventQueue.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-
-                try {
-                    DeporGUIFrame frame = new DeporGUIFrame();
-                    frame.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
+    // public static void main(String[] args) {
+    //
+    // EventQueue.invokeLater(new Runnable() {
+    //
+    // @Override
+    // public void run() {
+    //
+    // try {
+    // DeporGUIFrame frame = new DeporGUIFrame();
+    // frame.setVisible(true);
+    // } catch (Exception e) {
+    // e.printStackTrace();
+    // }
+    // }
+    // });
+    // }
 
 
     /**
      * Create the frame.
      */
-    public DeporGUIFrame() {
+    public DeporGUIFrame(DeplorController dController) {
 
         setTitle("Request Deploy");
 
@@ -87,15 +90,17 @@ public class DeporGUIFrame extends JFrame {
         branchListPanel.add(lblNewLabel_2);
 
         JComboBox repostoryCombo = new JComboBox();
-        repostoryCombo.setModel(new DefaultComboBoxModel(new String[] {"AAAA", "BBBB"}));
+        dController.initRepositoryList(repostoryCombo);
         branchListPanel.add(repostoryCombo);
+
+
 
         JLabel lblRepository = new JLabel("Branch");
         branchListPanel.add(lblRepository);
 
-        JComboBox comboBox = new JComboBox();
-        comboBox.setModel(new DefaultComboBoxModel(new String[] {"CCCCC", "DDDDD"}));
-        branchListPanel.add(comboBox);
+        JComboBox branchComboBox = new JComboBox();
+        dController.initBranchList(branchComboBox);
+        branchListPanel.add(branchComboBox);
 
         JPanel loginPanel = new JPanel();
         mainTop.add(loginPanel, BorderLayout.EAST);
@@ -180,48 +185,41 @@ public class DeporGUIFrame extends JFrame {
         btnNewButton_1.setHorizontalAlignment(SwingConstants.LEFT);
         historyPanel.add(btnNewButton_1);
 
-        JScrollPane scrollPane_2 = new JScrollPane();
-        RevDetailPanel.add(scrollPane_2, BorderLayout.CENTER);
+        JPanel panel_4 = new JPanel();
+        RevDetailPanel.add(panel_4, BorderLayout.CENTER);
+        panel_4.setLayout(new BorderLayout(0, 0));
 
-        detailInfo = new JTable();
-        detailInfo.setCellSelectionEnabled(true);
-        detailInfo.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        detailInfo.setRowMargin(3);
-        detailInfo.setRowHeight(25);
-        detailInfo.setBackground(SystemColor.info);
-        detailInfo
-                .setModel(new DefaultTableModel(
-                        new Object[][] {{
-                                "2015-06-01 12:12:12",
-                                "gildonf hong",
-                                "asdfasdfasdfasdfasdf \uC774\uB807\uAC8C \uC800\uB807\uAC8C \uBCC0\uACBD \uD588\uC2B5\uB2C8\uB2E4 \uD558\uD558\uD558\uD558\uD558\uD558\uD558"},},
-                        new String[] {"Time", "Owner", "Log"}) {
+        JPanel panel_5 = new JPanel();
+        FlowLayout flowLayout_2 = (FlowLayout) panel_5.getLayout();
+        flowLayout_2.setAlignment(FlowLayout.LEFT);
+        panel_4.add(panel_5, BorderLayout.NORTH);
 
-                    Class[] columnTypes = new Class[] {String.class, String.class, String.class};
+        JLabel lblNewLabel_3 = new JLabel("Time");
+        panel_5.add(lblNewLabel_3);
 
+        RevDetailTime = new JTextField();
+        RevDetailTime.setEditable(false);
+        panel_5.add(RevDetailTime);
+        RevDetailTime.setColumns(10);
 
-                    @Override
-                    public Class getColumnClass(int columnIndex) {
+        JLabel lblOwner = new JLabel("Owner");
+        panel_5.add(lblOwner);
 
-                        return columnTypes[columnIndex];
-                    }
+        RevDetailOwner = new JTextField();
+        RevDetailOwner.setEditable(false);
+        panel_5.add(RevDetailOwner);
+        RevDetailOwner.setColumns(10);
 
-                    boolean[] columnEditables = new boolean[] {false, false, false};
+        JPanel panel_6 = new JPanel();
+        panel_6.setForeground(new Color(128, 128, 128));
+        panel_6.setBorder(new LineBorder(new Color(0, 0, 0)));
+        panel_4.add(panel_6, BorderLayout.CENTER);
+        panel_6.setLayout(new BorderLayout(0, 0));
 
-
-                    @Override
-                    public boolean isCellEditable(int row, int column) {
-
-                        return columnEditables[column];
-                    }
-                });
-        detailInfo.getColumnModel().getColumn(0).setPreferredWidth(100);
-        detailInfo.getColumnModel().getColumn(0).setMinWidth(100);
-        detailInfo.getColumnModel().getColumn(1).setPreferredWidth(100);
-        detailInfo.getColumnModel().getColumn(1).setMinWidth(100);
-        detailInfo.getColumnModel().getColumn(2).setPreferredWidth(150);
-        detailInfo.getColumnModel().getColumn(2).setMinWidth(150);
-        scrollPane_2.setViewportView(detailInfo);
+        JTextArea textArea = new JTextArea();
+        textArea.setEditable(false);
+        textArea.setBackground(new Color(240, 230, 140));
+        panel_6.add(textArea);
 
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setPreferredSize(new Dimension(2, 80));
@@ -248,38 +246,18 @@ public class DeporGUIFrame extends JFrame {
 
         JPanel branchPanel = new JPanel();
         branchPanel.setPreferredSize(new Dimension(180, 10));
-        branchPanel.setBorder(new TitledBorder(null, "Branch List", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        branchPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Revision List", TitledBorder.LEADING,
+                TitledBorder.TOP, null, null));
         splitPane_1.setLeftComponent(branchPanel);
         branchPanel.setLayout(new BorderLayout(0, 0));
 
         JScrollPane scrollPane_1 = new JScrollPane();
         branchPanel.add(scrollPane_1, BorderLayout.CENTER);
 
-        JList list = new JList();
-        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        list.setModel(new AbstractListModel() {
-
-            String[] values = new String[] {"AAAAAAAAAAAAA1", "AAAAAAAAAAAAA2", "AAAAAAAAAAAAA3", "AAAAAAAAAAAAA4", "AAAAAAAAAAAAA5",
-                    "AAAAAAAAAAAAA1", "AAAAAAAAAAAAA2", "AAAAAAAAAAAAA3", "AAAAAAAAAAAAA4", "AAAAAAAAAAAAA5", "AAAAAAAAAAAAA1",
-                    "AAAAAAAAAAAAA2", "AAAAAAAAAAAAA3", "AAAAAAAAAAAAA4", "AAAAAAAAAAAAA5", "AAAAAAAAAAAAA1", "AAAAAAAAAAAAA2",
-                    "AAAAAAAAAAAAA3", "AAAAAAAAAAAAA4", "AAAAAAAAAAAAA5", "AAAAAAAAAAAAA1", "AAAAAAAAAAAAA2", "AAAAAAAAAAAAA3",
-                    "AAAAAAAAAAAAA4", "AAAAAAAAAAAAA5"};
-
-
-            @Override
-            public int getSize() {
-
-                return values.length;
-            }
-
-
-            @Override
-            public Object getElementAt(int index) {
-
-                return values[index];
-            }
-        });
-        scrollPane_1.setViewportView(list);
+        JList revisionList = new JList();
+        revisionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        dController.initRevisionList(revisionList);
+        scrollPane_1.setViewportView(revisionList);
 
         JPanel requestPanel = new JPanel();
         requestPanel.setBackground(new Color(173, 216, 230));

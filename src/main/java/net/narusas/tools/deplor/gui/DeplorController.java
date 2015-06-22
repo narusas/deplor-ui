@@ -1,84 +1,53 @@
 package net.narusas.tools.deplor.gui;
 
 
-import org.springframework.stereotype.Controller;
+import javax.swing.JComboBox;
+import javax.swing.JList;
 
 /**
  * 
  * @author jyan
  *
  */
-@Controller
-public class DeplorController {
 
-    // @Autowired
+public interface DeplorController {
+
+    void setDeporFrame(DeporGUIFrame frame);
+
+
+    void added();
+
+
+    void removed();
+
+
+    void imports();
+
 
     /**
-     * Get repository list
+     * Repository list
      * 
-     * @return
+     * @param rComboBox
      */
-    public String getRepositoryList() {
-
-        return "";
-    }
+    void initRepositoryList(JComboBox rComboBox);
 
 
     /**
-     * Get branch list
+     * Branch list
      * 
-     * @param repoId
-     *        : repository ID
-     * @return
+     * @param rComboBox
      */
-    public String getBranchList(String repoId) {
-
-        return "";
-    }
+    void initBranchList(JComboBox rComboBox);
 
 
     /**
-     * Get revision list
+     * Revision list
      * 
-     * @param branchId
-     * @return
+     * @param rList
      */
-    public String getRevisionList(String branchId) {
-
-        return "";
-    }
+    void initRevisionList(JList rList);
 
 
-    /**
-     * Get change list
-     * 
-     * @param revId
-     * @return
-     */
-    public String getChangeList(String revId) {
-
-        return "";
-    }
-
-
-    /**
-     * Get history
-     * 
-     * @param revId
-     * @return
-     */
-    public String getRequestHistoryList(String revId) {
-
-        return "";
-    }
-
-
-    /**
-     * Save requested deploy
-     */
-    public void saveRequestDeploy() {
-
-    }
-
+    void revisionSelected();
 
 }
