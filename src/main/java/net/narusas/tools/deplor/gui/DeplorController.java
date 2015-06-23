@@ -48,6 +48,17 @@ public interface DeplorController {
     void initRevisionList(JList rList);
 
 
+    /**
+     * Selected Revision
+     */
     void revisionSelected();
+
+
+    /**
+     * Add selected items
+     */
+    void addSelectedItem();
+
+
 
 }

@@ -35,7 +35,7 @@ public class DeplorMain extends JFrame {
                     applicationContext.getAutowireCapableBeanFactory().autowireBean(controller);
 
                     DeporGUIFrame frame = new DeporGUIFrame(controller);
-
+                    controller.setDeporFrame(frame);
                     frame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -8,6 +8,8 @@ import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -26,6 +28,8 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 
@@ -35,11 +39,12 @@ public class DeporGUIFrame extends JFrame {
     private JTextField loginId;
     private JTextField loginPass;
     private JTable revListTable;
-    private JTable requestListtable;
+    private JTable requestList;
 
     private DeplorController dController;
     private JTextField RevDetailTime;
     private JTextField RevDetailOwner;
+    private JTextArea revInfoText;
 
 
     /**
@@ -68,7 +73,7 @@ public class DeporGUIFrame extends JFrame {
     /**
      * Create the frame.
      */
-    public DeporGUIFrame(DeplorController dController) {
+    public DeporGUIFrame(final DeplorController dController) {
 
         setTitle("Request Deploy");
 
@@ -200,7 +205,7 @@ public class DeporGUIFrame extends JFrame {
         RevDetailTime = new JTextField();
         RevDetailTime.setEditable(false);
         panel_5.add(RevDetailTime);
-        RevDetailTime.setColumns(10);
+        RevDetailTime.setColumns(20);
 
         JLabel lblOwner = new JLabel("Owner");
         panel_5.add(lblOwner);
@@ -216,10 +221,10 @@ public class DeporGUIFrame extends JFrame {
         panel_4.add(panel_6, BorderLayout.CENTER);
         panel_6.setLayout(new BorderLayout(0, 0));
 
-        JTextArea textArea = new JTextArea();
-        textArea.setEditable(false);
-        textArea.setBackground(new Color(240, 230, 140));
-        panel_6.add(textArea);
+        revInfoText = new JTextArea();
+        revInfoText.setEditable(false);
+        revInfoText.setBackground(new Color(255, 255, 224));
+        panel_6.add(revInfoText);
 
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setPreferredSize(new Dimension(2, 80));
@@ -241,6 +246,14 @@ public class DeporGUIFrame extends JFrame {
         panel.add(applyPanel, BorderLayout.SOUTH);
 
         JButton btnApply = new JButton("\u25BC Apply selected items");
+        btnApply.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+                dController.addSelectedItem();
+            }
+        });
         applyPanel.add(btnApply);
         btnApply.setSize(new Dimension(100, 30));
 
@@ -255,6 +268,14 @@ public class DeporGUIFrame extends JFrame {
         branchPanel.add(scrollPane_1, BorderLayout.CENTER);
 
         JList revisionList = new JList();
+        revisionList.addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+
+                dController.revisionSelected();
+            }
+        });
         revisionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         dController.initRevisionList(revisionList);
         scrollPane_1.setViewportView(revisionList);
@@ -274,10 +295,10 @@ public class DeporGUIFrame extends JFrame {
         scrollPane_3.setPreferredSize(new Dimension(2, 50));
         panel_1.add(scrollPane_3, BorderLayout.CENTER);
 
-        requestListtable = new JTable();
-        requestListtable.setModel(new DefaultTableModel(new Object[][] {{null, null, null, null, null},}, new String[] {"New column",
+        requestList = new JTable();
+        requestList.setModel(new DefaultTableModel(new Object[][] {{null, null, null, null, null},}, new String[] {"New column",
                 "New column", "New column", "New column", "New column"}));
-        scrollPane_3.setViewportView(requestListtable);
+        scrollPane_3.setViewportView(requestList);
 
         JPanel panel_3 = new JPanel();
         panel_1.add(panel_3, BorderLayout.SOUTH);
@@ -290,9 +311,44 @@ public class DeporGUIFrame extends JFrame {
         requestPanel.add(panel_2, BorderLayout.SOUTH);
         panel_2.setLayout(new BorderLayout(0, 0));
 
+        JPanel panel_7 = new JPanel();
+        panel_7.setBorder(new LineBorder(new Color(0, 0, 0)));
+        panel_2.add(panel_7, BorderLayout.NORTH);
+        panel_7.setLayout(new BorderLayout(0, 0));
+
         JTextArea comment = new JTextArea();
+        comment.setBackground(new Color(255, 255, 224));
+        panel_7.add(comment);
         comment.setPreferredSize(new Dimension(4, 40));
-        panel_2.add(comment, BorderLayout.CENTER);
     }
 
+
+    public JTextField getRevDetailTime() {
+
+        return RevDetailTime;
+    }
+
+
+    public JTextField getRevDetailOwner() {
+
+        return RevDetailOwner;
+    }
+
+
+    public JTextArea getRevInfoText() {
+
+        return revInfoText;
+    }
+
+
+    public JTable getRevListTable() {
+
+        return revListTable;
+    }
+
+
+    public JTable getRequestList() {
+
+        return requestList;
+    }
 }
