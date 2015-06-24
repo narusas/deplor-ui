@@ -32,7 +32,7 @@ public class DeplorControllerImpl implements DeplorController, InitializingBean 
 
     private DeporGUIFrame ui;
     private JList revisionList;
-    private JTable changeList;
+    private JTable changeList; 
     private JTable requestList;
     private RequestTableModel requestTableModel;
     private ChangesTableModel changesTableModel;
@@ -378,7 +378,6 @@ public class DeplorControllerImpl implements DeplorController, InitializingBean 
 
     @Override
     public void removeRequestItems() {
-
         System.out.println(" >> Remove Click");
     }
 

@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import lombok.EqualsAndHashCode;
@@ -40,6 +41,7 @@ public class Branch {
 	Repository		repository;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "branch", cascade = { CascadeType.ALL })
+	@OrderBy("timestamp")
 	List<Revision>	revisions;
 
 	public void addRevision(Revision revision) {
