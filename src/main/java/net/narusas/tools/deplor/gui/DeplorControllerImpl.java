@@ -157,9 +157,8 @@ public class DeplorControllerImpl implements DeplorController, InitializingBean 
     }
 
 
-    public TableModel getRevTableData(final Set<Change> chg) {
+    public TableModel getRevTableData(final List<Change> list) {
 
-        final List<Change> list = new ArrayList<>(chg);
         return new DefaultTableModel() {
 
             @Override

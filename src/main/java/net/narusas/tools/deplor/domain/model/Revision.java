@@ -1,9 +1,8 @@
 package net.narusas.tools.deplor.domain.model;
 
-
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import lombok.EqualsAndHashCode;
@@ -27,54 +27,59 @@ import org.tmatesoft.svn.core.SVNLogEntry;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = {"changes"})
+@EqualsAndHashCode(exclude = { "changes" })
 // @ToString(exclude = { "changes" })
 public class Revision {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	Long			id;
 
-    @JoinColumn(name = "branch") Branch branch;
+	@JoinColumn(name = "branch")
+	Branch			branch;
 
-    @Column Long version;
+	@Column
+	Long			version;
 
-    @Column Date timestamp;
+	@Column
+	Date			timestamp;
 
-    @JoinColumn(name = "author") Account author;
+	@JoinColumn(name = "author")
+	Account			author;
 
-    @Column String message;
+	@Column
+	String			message;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "revision") Set<Change> changes;
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "revision")
+	@OrderBy("path")
+	List<Change>	changes;
 
+	public Revision(long version, Date timestamp, Account author, String message) {
 
-    public Revision(long version, Date timestamp, Account author, String message) {
+		this.version = version;
+		this.timestamp = timestamp;
+		this.author = author;
+		this.message = message;
+	}
 
-        this.version = version;
-        this.timestamp = timestamp;
-        this.author = author;
-        this.message = message;
-    }
+	public void addChange(Change change) {
 
+		if (changes == null) {
+			changes = new ArrayList<>();
+		}
+		changes.add(change);
+		change.setRevision(this);
+	}
 
-    public void addChange(Change change) {
+	public static Revision from(SVNLogEntry svnLogEntry, Account account) {
 
-        if (changes == null) {
-            changes = new HashSet<>();
-        }
-        changes.add(change);
-        change.setRevision(this);
-    }
+		return new Revision(svnLogEntry.getRevision(), svnLogEntry.getDate(), account, svnLogEntry.getMessage());
+	}
 
+	@Override
+	public String toString() {
 
-    public static Revision from(SVNLogEntry svnLogEntry, Account account) {
-
-        return new Revision(svnLogEntry.getRevision(), svnLogEntry.getDate(), account, svnLogEntry.getMessage());
-    }
-
-
-    @Override
-    public String toString() {
-
-        return getVersion() + " ( " + getAuthor().getName() + " ) ";
-    }
+		return getVersion() + " ( " + getAuthor().getName() + " ) ";
+	}
 
 }
