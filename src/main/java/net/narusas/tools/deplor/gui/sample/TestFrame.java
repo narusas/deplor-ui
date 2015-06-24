@@ -1,106 +1,123 @@
 package net.narusas.tools.deplor.gui.sample;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
-import javax.swing.JTextField;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JButton;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.border.EmptyBorder;
 
-import lombok.Data;
 import lombok.Setter;
 
 public class TestFrame extends JFrame {
 
-	private JPanel			contentPane;
-	private JTextField		aField;
-	private JTextField		bField;
-	private JTable			pairTable;
+    private JPanel contentPane;
+    private JTextField aField;
+    private JTextField bField;
+    private JTable pairTable;
 
-	@Setter
-	private TestController	controller;
+    @Setter private TestController controller;
 
-	/**
-	 * Create the frame.
-	 */
-	public TestFrame(TestController c) {
-		controller = c;
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 780, 300);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout(0, 0));
-		setContentPane(contentPane);
 
-		JPanel panel = new JPanel();
-		contentPane.add(panel, BorderLayout.NORTH);
+    /**
+     * Create the frame.
+     */
+    public TestFrame(TestController c) {
 
-		JLabel lblNewLabel = new JLabel("New label");
-		panel.add(lblNewLabel);
+        controller = c;
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setBounds(100, 100, 780, 300);
+        contentPane = new JPanel();
+        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+        contentPane.setLayout(new BorderLayout(0, 0));
+        setContentPane(contentPane);
 
-		aField = new JTextField();
-		panel.add(aField);
-		aField.setColumns(10);
+        JPanel panel = new JPanel();
+        contentPane.add(panel, BorderLayout.NORTH);
 
-		JLabel lblNewLabel_1 = new JLabel("New label");
-		panel.add(lblNewLabel_1);
+        JLabel lblNewLabel = new JLabel("New label");
+        panel.add(lblNewLabel);
 
-		bField = new JTextField();
-		panel.add(bField);
-		bField.setColumns(10);
+        aField = new JTextField();
+        panel.add(aField);
+        aField.setColumns(10);
 
-		JButton addButton = new JButton("Add");
-		addButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				controller.added();
-			}
-		});
-		panel.add(addButton);
+        JLabel lblNewLabel_1 = new JLabel("New label");
+        panel.add(lblNewLabel_1);
 
-		JButton removeButton = new JButton("Remove");
-		removeButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				controller.removed();
-			}
-		});
-		panel.add(removeButton);
+        bField = new JTextField();
+        panel.add(bField);
+        bField.setColumns(10);
 
-		JButton importButton = new JButton("Import");
-		importButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				controller.imports();
-			}
-		});
-		panel.add(importButton);
+        JButton addButton = new JButton("Add");
+        addButton.addActionListener(new ActionListener() {
 
-		JPanel panel_1 = new JPanel();
-		contentPane.add(panel_1, BorderLayout.CENTER);
-		panel_1.setLayout(new BorderLayout(0, 0));
+            @Override
+            public void actionPerformed(ActionEvent e) {
 
-		JScrollPane scrollPane = new JScrollPane();
-		panel_1.add(scrollPane);
+                controller.added();
+            }
+        });
+        panel.add(addButton);
 
-		pairTable = new JTable();
-		pairTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		controller.initPairTable(pairTable);
-		scrollPane.setViewportView(pairTable);
-	}
+        JButton removeButton = new JButton("Remove");
+        removeButton.addActionListener(new ActionListener() {
 
-	public JTextField getAField() {
-		return aField;
-	}
+            @Override
+            public void actionPerformed(ActionEvent e) {
 
-	public JTextField getBField() {
-		return bField;
-	}
+                controller.removed();
+            }
+        });
+        panel.add(removeButton);
+
+        JButton importButton = new JButton("Import");
+        importButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                controller.imports();
+            }
+        });
+        panel.add(importButton);
+
+        JPanel panel_1 = new JPanel();
+        contentPane.add(panel_1, BorderLayout.CENTER);
+        panel_1.setLayout(new BorderLayout(0, 0));
+
+        JScrollPane scrollPane = new JScrollPane();
+        panel_1.add(scrollPane);
+
+        pairTable = new JTable();
+        pairTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        controller.initPairTable(pairTable);
+        scrollPane.setViewportView(pairTable);
+
+        JComboBox comboBox = new JComboBox();
+        comboBox.setModel(new DefaultComboBoxModel(new String[] {"aaaaa", "bbbbb"}));
+        panel_1.add(comboBox, BorderLayout.NORTH);
+    }
+
+
+    public JTextField getAField() {
+
+        return aField;
+    }
+
+
+    public JTextField getBField() {
+
+        return bField;
+    }
 }
