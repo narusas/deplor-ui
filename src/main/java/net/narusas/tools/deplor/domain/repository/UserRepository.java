@@ -4,13 +4,14 @@ import java.util.List;
 
 import net.narusas.tools.deplor.domain.model.Branch;
 import net.narusas.tools.deplor.domain.model.Revision;
+import net.narusas.tools.deplor.domain.model.User;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RevisionRepository extends JpaRepository<Revision, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
-	Revision findOneByBranchAndVersion(Branch branch, long version);
+	User findOneByName(String name);
 
 }

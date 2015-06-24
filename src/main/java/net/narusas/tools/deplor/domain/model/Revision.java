@@ -1,10 +1,9 @@
 package net.narusas.tools.deplor.domain.model;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,16 +12,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import org.tmatesoft.svn.core.SVNLogEntry;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
+
+import org.tmatesoft.svn.core.SVNLogEntry;
 
 @Entity
 @Table(name = "revisions")
@@ -30,31 +28,34 @@ import lombok.ToString;
 @Getter
 @Setter
 @EqualsAndHashCode(exclude = { "changes" })
-@ToString(exclude = { "changes" })
+// @ToString(exclude = { "changes" })
 public class Revision {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long		id;
+	Long			id;
 
 	@JoinColumn(name = "branch")
-	Branch		branch;
+	Branch			branch;
 
 	@Column
-	Long		version;
+	Long			version;
 
 	@Column
-	Date		timestamp;
+	Date			timestamp;
 
 	@JoinColumn(name = "author")
-	Account		author;
+	Account			author;
 
 	@Column
-	String		message;
+	String			message;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "revision")
-	Set<Change>	changes;
+	@OrderBy("path")
+	List<Change>	changes;
 
 	public Revision(long version, Date timestamp, Account author, String message) {
+
 		this.version = version;
 		this.timestamp = timestamp;
 		this.author = author;
@@ -62,15 +63,23 @@ public class Revision {
 	}
 
 	public void addChange(Change change) {
+
 		if (changes == null) {
-			changes = new HashSet<>();
+			changes = new ArrayList<>();
 		}
 		changes.add(change);
 		change.setRevision(this);
 	}
 
 	public static Revision from(SVNLogEntry svnLogEntry, Account account) {
+
 		return new Revision(svnLogEntry.getRevision(), svnLogEntry.getDate(), account, svnLogEntry.getMessage());
+	}
+
+	@Override
+	public String toString() {
+
+		return getVersion() + " ( " + getAuthor().getName() + " ) ";
 	}
 
 }

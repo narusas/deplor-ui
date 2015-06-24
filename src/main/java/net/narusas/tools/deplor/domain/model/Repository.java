@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import lombok.EqualsAndHashCode;
@@ -52,6 +53,7 @@ public class Repository {
 	Map<String, Account>	accounts;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "repository")
+	@OrderBy("name")
 	List<Branch>			branches;
 
 	public Branch getBranche(String name) {
