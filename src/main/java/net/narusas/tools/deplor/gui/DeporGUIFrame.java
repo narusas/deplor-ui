@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -30,7 +31,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;
 
 
 public class DeporGUIFrame extends JFrame {
@@ -38,7 +38,7 @@ public class DeporGUIFrame extends JFrame {
     private JPanel contentPane;
     private JTextField loginId;
     private JTextField loginPass;
-    private JTable revListTable;
+    private JTable changesListTable;
     private JTable requestList;
 
     private DeplorController dController;
@@ -222,6 +222,7 @@ public class DeporGUIFrame extends JFrame {
         panel_6.setLayout(new BorderLayout(0, 0));
 
         revInfoText = new JTextArea();
+        revInfoText.setMargin(new Insets(5, 5, 5, 5));
         revInfoText.setEditable(false);
         revInfoText.setBackground(new Color(255, 255, 224));
         panel_6.add(revInfoText);
@@ -230,16 +231,18 @@ public class DeporGUIFrame extends JFrame {
         scrollPane.setPreferredSize(new Dimension(2, 80));
         panel.add(scrollPane, BorderLayout.CENTER);
 
-        revListTable = new JTable();
-        revListTable.setRowMargin(3);
-        revListTable.setRowHeight(25);
-        revListTable.setModel(new DefaultTableModel(new Object[][] { {null, null}, {null, null},}, new String[] {"Type", "Path"}));
-        revListTable.getColumnModel().getColumn(0).setPreferredWidth(100);
-        revListTable.getColumnModel().getColumn(0).setMinWidth(100);
-        revListTable.getColumnModel().getColumn(0).setMaxWidth(100);
-        revListTable.getColumnModel().getColumn(1).setPreferredWidth(200);
-        revListTable.getColumnModel().getColumn(1).setMinWidth(200);
-        scrollPane.setViewportView(revListTable);
+        changesListTable = new JTable();
+        dController.initChangeList(changesListTable);
+        changesListTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        changesListTable.setRowMargin(3);
+        changesListTable.setRowHeight(25);
+        // changesListTable.setModel(new DefaultTableModel(new Object[][] { {null, null}, {null, null},}, new String[] {"Type", "Path"}));
+        changesListTable.getColumnModel().getColumn(0).setPreferredWidth(100);
+        changesListTable.getColumnModel().getColumn(0).setMinWidth(100);
+        changesListTable.getColumnModel().getColumn(0).setMaxWidth(100);
+        changesListTable.getColumnModel().getColumn(1).setPreferredWidth(200);
+        changesListTable.getColumnModel().getColumn(1).setMinWidth(200);
+        scrollPane.setViewportView(changesListTable);
 
         JPanel applyPanel = new JPanel();
         FlowLayout flowLayout_1 = (FlowLayout) applyPanel.getLayout();
@@ -283,7 +286,7 @@ public class DeporGUIFrame extends JFrame {
         JPanel requestPanel = new JPanel();
         requestPanel.setBackground(new Color(173, 216, 230));
         requestPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Request Deploy", TitledBorder.LEADING,
-                TitledBorder.TOP, null, new Color(128, 0, 0)));
+                TitledBorder.TOP, null, new Color(255, 255, 255)));
         splitPane.setRightComponent(requestPanel);
         requestPanel.setLayout(new BorderLayout(0, 0));
 
@@ -296,14 +299,23 @@ public class DeporGUIFrame extends JFrame {
         panel_1.add(scrollPane_3, BorderLayout.CENTER);
 
         requestList = new JTable();
-        requestList.setModel(new DefaultTableModel(new Object[][] {{null, null, null, null, null},}, new String[] {"New column",
-                "New column", "New column", "New column", "New column"}));
+        dController.initRequestList(requestList);
+        // requestList.setModel(new DefaultTableModel(new Object[][] {{null, null, null, null, null},}, new String[] {"Revision", "Type",
+        // "Owner", "Path", "Branch"}));
         scrollPane_3.setViewportView(requestList);
 
         JPanel panel_3 = new JPanel();
         panel_1.add(panel_3, BorderLayout.SOUTH);
 
         JButton btnNewButton_2 = new JButton("Remove seleted items");
+        btnNewButton_2.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+                dController.removeRequestItems();
+            }
+        });
         panel_3.add(btnNewButton_2);
 
         JPanel panel_2 = new JPanel();
@@ -341,9 +353,9 @@ public class DeporGUIFrame extends JFrame {
     }
 
 
-    public JTable getRevListTable() {
+    public JTable getChangesListTable() {
 
-        return revListTable;
+        return changesListTable;
     }
 
 

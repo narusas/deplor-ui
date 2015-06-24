@@ -3,6 +3,7 @@ package net.narusas.tools.deplor.gui;
 
 import javax.swing.JComboBox;
 import javax.swing.JList;
+import javax.swing.JTable;
 
 /**
  * 
@@ -48,6 +49,15 @@ public interface DeplorController {
     void initRevisionList(JList rList);
 
 
+    void initChangeList(JTable revListTable);
+
+
+    /**
+     * Request Table list
+     */
+    void initRequestList(JTable reqtListTable);
+
+
     /**
      * Selected Revision
      */
@@ -60,5 +70,6 @@ public interface DeplorController {
     void addSelectedItem();
 
 
+    void removeRequestItems();
 
 }
