@@ -32,7 +32,7 @@ public class DeplorControllerImpl implements DeplorController, InitializingBean 
 
     private DeporGUIFrame ui;
     private JList revisionList;
-    private JTable changeList; 
+    private JTable changeList;
     private JTable requestList;
     private RequestTableModel requestTableModel;
     private ChangesTableModel changesTableModel;
@@ -153,7 +153,7 @@ public class DeplorControllerImpl implements DeplorController, InitializingBean 
         ui.getRevInfoText().setText(r.getMessage());
 
         // SET Revision's Change List
-        getChangedTableModel().updateChanges(r.getChanges());
+        // getChangedTableModel().updateChanges(r.getChanges());
 
         ui.getChangesListTable().getColumnModel().getColumn(0).setMaxWidth(80);
 
@@ -378,6 +378,7 @@ public class DeplorControllerImpl implements DeplorController, InitializingBean 
 
     @Override
     public void removeRequestItems() {
+
         System.out.println(" >> Remove Click");
     }
 
