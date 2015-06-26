@@ -23,6 +23,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+/**
+ * 상단 Working Set 패널들에 대한 컨트롤러
+ * 
+ * @author narusas
+ *
+ */
 @Controller
 public class WorkingController {
 	@Autowired

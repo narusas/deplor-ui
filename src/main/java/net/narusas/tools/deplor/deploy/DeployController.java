@@ -16,6 +16,12 @@ import net.narusas.tools.deplor.domain.repository.RepoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+/**
+ * 최상위 컨트롤러
+ * 
+ * @author narusas
+ *
+ */
 @Controller
 public class DeployController {
 
@@ -54,5 +60,4 @@ public class DeployController {
 		workingController.addToWorking();
 	}
 
-	
 }
