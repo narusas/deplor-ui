@@ -11,6 +11,7 @@ import net.narusas.tools.deplor.domain.model.Account;
 import net.narusas.tools.deplor.domain.model.Branch;
 import net.narusas.tools.deplor.domain.model.Change;
 import net.narusas.tools.deplor.domain.model.DeploymentRequest;
+import net.narusas.tools.deplor.domain.model.DeploymentStatus;
 import net.narusas.tools.deplor.domain.model.Repository;
 import net.narusas.tools.deplor.domain.model.Revision;
 import net.narusas.tools.deplor.domain.model.User;
@@ -61,6 +62,7 @@ public class ReporterTest {
 		DeploymentRequest request = new DeploymentRequest();
 		request.setAuthor(account);
 		request.setMessage("테스트 한글 메시지");
+		request.setBranch(branch);
 
 		for (Change change : revision.getChanges()) {
 			System.out.println(change);
@@ -69,6 +71,7 @@ public class ReporterTest {
 
 		// 제출 시간은 저장 직전에 넣어 주는게 좋다
 		request.setTimestamp(new Date());
+		request.setStatus(DeploymentStatus.제출됨);
 		deploymentRepository.save(request);
 	}
 
