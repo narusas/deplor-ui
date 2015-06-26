@@ -7,8 +7,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import net.narusas.tools.deplor.config.ApplicationConfig;
-import net.narusas.tools.deplor.gui.old.DeplorController;
-import net.narusas.tools.deplor.gui.old.DeplorControllerImpl;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -37,14 +35,14 @@ public class DeplorGUIMain extends JFrame {
                     applicationContext.getAutowireCapableBeanFactory().autowireBean(controller);
 
                     DeplorGUI frame = new DeplorGUI(controller);
-                    // controller.setDeporFrame(frame);
+                    controller.setDeplorFrame(frame);
                     frame.setVisible(true);
+                    controller.init();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
     }
-
 
 }

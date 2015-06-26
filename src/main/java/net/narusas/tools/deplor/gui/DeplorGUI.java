@@ -7,9 +7,11 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.SystemColor;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
-import javax.swing.AbstractListModel;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -23,23 +25,28 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import net.narusas.tools.deplor.gui.old.DeplorController;
 
 
 public class DeplorGUI extends JFrame {
 
     private JPanel contentPane;
-    private JTextField textField;
+    private JTextField revFilterKeyword;
     private JTable table;
     private JTable table_1;
-    private JTextField textField_1;
-    private JPasswordField passwordField;
+    private JTextField loginId;
+    private JPasswordField loginPass;
     private DeplorController dController;
+    private JPanel loginPanel;
+    private JComboBox repositoryList;
+    private JComboBox branchList;
+    private JList revisionList;
+    private JButton revisionFilterBtn;
 
 
     /**
@@ -84,40 +91,28 @@ public class DeplorGUI extends JFrame {
         splitPane.setLeftComponent(panel_1);
         panel_1.setLayout(new BorderLayout(0, 0));
 
-        JList revisionList = new JList();
-        revisionList.setModel(new AbstractListModel() {
-
-            String[] values = new String[] {"aaaaaaaaaaaaa", "bbbbbbbbbbbb", "cccccccccccccc"};
-
-
-            @Override
-            public int getSize() {
-
-                return values.length;
-            }
-
-
-            @Override
-            public Object getElementAt(int index) {
-
-                return values[index];
-            }
-        });
-        panel_1.add(revisionList, BorderLayout.CENTER);
-
         JPanel panel_6 = new JPanel();
         panel_6.setBackground(SystemColor.activeCaption);
         panel_1.add(panel_6, BorderLayout.SOUTH);
 
-        textField = new JTextField();
-        panel_6.add(textField);
-        textField.setColumns(7);
+        revFilterKeyword = new JTextField();
+        panel_6.add(revFilterKeyword);
+        revFilterKeyword.setColumns(7);
 
-        JButton btnNewButton = new JButton("");
-        btnNewButton.setIcon(new ImageIcon(DeplorGUI.class.getResource("/icons/application_form_magnify.png")));
-        btnNewButton.setMargin(new Insets(2, 2, 2, 2));
-        btnNewButton.setPreferredSize(new Dimension(40, 25));
-        panel_6.add(btnNewButton);
+        revisionFilterBtn = new JButton("");
+        revisionFilterBtn.setIcon(new ImageIcon(DeplorGUI.class.getResource("/icons/application_form_magnify.png")));
+        revisionFilterBtn.setMargin(new Insets(2, 2, 2, 2));
+        revisionFilterBtn.setPreferredSize(new Dimension(40, 25));
+        panel_6.add(revisionFilterBtn);
+
+        JScrollPane revisionScrollPane = new JScrollPane();
+        revisionScrollPane.setPreferredSize(new Dimension(100, 2));
+        panel_1.add(revisionScrollPane, BorderLayout.CENTER);
+
+        revisionList = new JList();
+
+        revisionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        revisionScrollPane.setViewportView(revisionList);
 
         JPanel panel_2 = new JPanel();
         splitPane.setRightComponent(panel_2);
@@ -200,39 +195,64 @@ public class DeplorGUI extends JFrame {
         JLabel lblRepository = new JLabel("Repository");
         panel_10.add(lblRepository);
 
-        JComboBox repositoryList = new JComboBox();
-        repositoryList.setModel(new DefaultComboBoxModel(new String[] {"aaaaaaaaaaaaaaaaaa", "vvvvvvvvvvvvvvvvvvvvv"}));
+        repositoryList = new JComboBox();
+        repositoryList.addItemListener(new ItemListener() {
+
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+
+                dController.initBranchList();
+            }
+        });
         panel_10.add(repositoryList);
 
         JLabel lblBranch = new JLabel("Branch");
         panel_10.add(lblBranch);
 
-        JComboBox branchList = new JComboBox();
-        branchList.setModel(new DefaultComboBoxModel(new String[] {"ccccccccccccccccccccc", "ccccccccccccccccccccccc"}));
+        branchList = new JComboBox();
+        branchList.addItemListener(new ItemListener() {
+
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+
+                dController.initRevisionList();
+            }
+        });
         panel_10.add(branchList);
 
-        JPanel panel_11 = new JPanel();
-        panel_11.setBackground(SystemColor.text);
-        panel.add(panel_11, BorderLayout.EAST);
+        loginPanel = new JPanel();
+        loginPanel.setBackground(SystemColor.text);
+        panel.add(loginPanel, BorderLayout.EAST);
 
         JLabel lblNewLabel = new JLabel("ID");
-        panel_11.add(lblNewLabel);
+        loginPanel.add(lblNewLabel);
 
-        textField_1 = new JTextField();
-        panel_11.add(textField_1);
-        textField_1.setColumns(5);
+        loginId = new JTextField();
+        loginPanel.add(loginId);
+        loginId.setColumns(5);
 
         JLabel lblNewLabel_1 = new JLabel("Pass");
-        panel_11.add(lblNewLabel_1);
+        loginPanel.add(lblNewLabel_1);
 
-        passwordField = new JPasswordField();
-        passwordField.setColumns(5);
-        panel_11.add(passwordField);
+        loginPass = new JPasswordField();
+        loginPass.setColumns(5);
+        loginPanel.add(loginPass);
 
         JButton btnNewButton_1 = new JButton("");
+        btnNewButton_1.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+                if (dController.login() == true) {
+                    dController.eventRepositoryList();
+                }
+
+            }
+        });
         btnNewButton_1.setMargin(new Insets(2, 4, 2, 4));
         btnNewButton_1.setIcon(new ImageIcon(DeplorGUI.class.getResource("/icons/lock_go.png")));
-        panel_11.add(btnNewButton_1);
+        loginPanel.add(btnNewButton_1);
 
         JPanel panel_4 = new JPanel();
         contentPane.add(panel_4, BorderLayout.SOUTH);
@@ -242,4 +262,52 @@ public class DeplorGUI extends JFrame {
         panel_4.add(submitButton);
     }
 
+
+    public JTextField getLoginId() {
+
+        return loginId;
+    }
+
+
+    public JPasswordField getLoginPass() {
+
+        return loginPass;
+    }
+
+
+
+    public JPanel getLoginPanel() {
+
+        return loginPanel;
+    }
+
+
+    public JComboBox getRepositoryList() {
+
+        return repositoryList;
+    }
+
+
+    public JComboBox getBranchList() {
+
+        return branchList;
+    }
+
+
+    public JList getRevisionList() {
+
+        return revisionList;
+    }
+
+
+    public JTextField getRevFilterKeyword() {
+
+        return revFilterKeyword;
+    }
+
+
+    public JButton getRevisionFilterBtn() {
+
+        return revisionFilterBtn;
+    }
 }
