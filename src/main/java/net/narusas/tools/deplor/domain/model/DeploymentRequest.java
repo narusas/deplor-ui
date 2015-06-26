@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -15,6 +16,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import net.narusas.tools.deplor.domain.model.DeploymentStatus.DeploymentStatusConverter;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,15 +26,25 @@ import lombok.ToString;
 @Table(name = "deploymentRequest")
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(of = "id")
 @ToString
 public class DeploymentRequest {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long		id;
+	Long				id;
+
+	@JoinColumn(name = "branch")
+	Branch				branch;
+
+	@Column
+	@Convert(converter = DeploymentStatusConverter.class)
+	DeploymentStatus	status	= DeploymentStatus.미제출;
 
 	@JoinColumn(name = "author")
-	Account		author;
+	Account				author;
+
+	@Column
+	Date				timestamp;
 
 	//@formatter:off
 	@OneToMany(fetch = FetchType.LAZY)
@@ -42,13 +54,10 @@ public class DeploymentRequest {
 			inverseJoinColumns = { @JoinColumn(name = "changeId") }
 	)
 	//@formatter:on
-	Set<Change>	changes;
+	Set<Change>			changes;
 
 	@Column
-	Date		timestamp;
-
-	@Column
-	String		message;
+	String				message;
 
 	public void addChange(Change change) {
 		if (changes == null) {
@@ -56,13 +65,12 @@ public class DeploymentRequest {
 		}
 		changes.add(change);
 	}
-	
+
 	public static DeploymentRequest from(DeploymentRequest old) {
 		DeploymentRequest newRequest = new DeploymentRequest();
 		newRequest.setAuthor(old.getAuthor());
 		newRequest.setChanges(old.getChanges());
-		
-		
+
 		return newRequest;
 	}
 

@@ -1,4 +1,4 @@
-package net.narusas.tools.deplor.gui;
+package net.narusas.tools.deplor.gui.old;
 
 
 import java.util.ArrayList;
@@ -10,9 +10,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
+import javax.swing.table.AbstractTableModel;
 
 import net.narusas.tools.deplor.domain.model.Branch;
 import net.narusas.tools.deplor.domain.model.Change;
@@ -35,6 +33,10 @@ public class DeplorControllerImpl implements DeplorController, InitializingBean 
     private DeporGUIFrame ui;
     private JList revisionList;
     private JTable changeList;
+    private JTable requestList;
+    private RequestTableModel requestTableModel;
+    private ChangesTableModel changesTableModel;
+
 
 
     @Override
@@ -151,99 +153,141 @@ public class DeplorControllerImpl implements DeplorController, InitializingBean 
         ui.getRevInfoText().setText(r.getMessage());
 
         // SET Revision's Change List
-        ui.getRevListTable().setModel(getRevTableData(r.getChanges()));
-        ui.getRevListTable().getColumnModel().getColumn(0).setMaxWidth(80);
+        // getChangedTableModel().updateChanges(r.getChanges());
+
+        ui.getChangesListTable().getColumnModel().getColumn(0).setMaxWidth(80);
+
+    }
+
+    public static class ChangesTableModel extends AbstractTableModel {
+
+        List<Change> list = new ArrayList<>();
+
+
+        public void updateChanges(Set<Change> changes) {
+
+            list = new ArrayList<>(changes);
+            fireTableDataChanged();
+        }
+
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+
+            switch (columnIndex) {
+                case 0:
+                    String rvl = "";
+                    switch (list.get(rowIndex).getType()) {
+                        case "A":
+                            rvl = "Add";
+                            break;
+                        case "M":
+                            rvl = "Modify";
+                            break;
+                        case "D":
+                            rvl = "Delete";
+                            break;
+
+                    }
+
+                    return rvl;
+                case 1:
+                    return list.get(rowIndex).getPath();
+
+            }
+
+            return null;
+
+        }
+
+
+        @Override
+        public int getRowCount() {
+
+            return list.size();
+        }
+
+
+        @Override
+        public int getColumnCount() {
+
+            return 2;
+        }
+
+
+        @Override
+        public String getColumnName(int column) {
+
+            switch (column) {
+                case 0:
+                    return "Type";
+                case 1:
+                    return "Path";
+
+            }
+            return null;
+        }
+
+
+        public Change getChangeAtRow(int selectedRow) {
+
+            return list.get(selectedRow);
+        }
+    }
+
+
+
+    public ChangesTableModel getChangedTableModel() {
+
+        if (changesTableModel != null) {
+            return changesTableModel;
+        }
+        changesTableModel = new ChangesTableModel();
+
+        return changesTableModel;
 
     }
 
 
-    public TableModel getRevTableData(final List<Change> list) {
+    @Override
+    public void initRequestList(JTable reqtListTable) {
 
-        return new DefaultTableModel() {
+        this.requestList = reqtListTable;
+        this.requestList.setModel(getRequestTableModel());
 
-            @Override
-            public Object getValueAt(int rowIndex, int columnIndex) {
-
-                switch (columnIndex) {
-                    case 0:
-                        String rvl = "";
-                        switch (list.get(rowIndex).getType()) {
-                            case "A":
-                                rvl = "Add";
-                                break;
-                            case "M":
-                                rvl = "Modify";
-                                break;
-                            case "D":
-                                rvl = "Delete";
-                                break;
-
-                        }
-
-                        return rvl;
-                    case 1:
-                        return list.get(rowIndex).getPath();
-
-                }
-
-                return null;
-
-            }
-
-
-            @Override
-            public int getRowCount() {
-
-                return list.size();
-            }
-
-
-            @Override
-            public int getColumnCount() {
-
-                return 2;
-            }
-
-
-            @Override
-            public String getColumnName(int column) {
-
-                switch (column) {
-                    case 0:
-                        return "Type";
-                    case 1:
-                        return "Path";
-
-                }
-                return null;
-            }
-        };
     }
+
+
+    @Override
+    public void initChangeList(JTable revListTable) {
+
+        this.changeList = revListTable;
+        this.changeList.setModel(getChangedTableModel());
+    }
+
+
+    RequestTableModel getRequestTableModel() {
+
+        if (requestTableModel != null) {
+            return requestTableModel;
+        }
+        requestTableModel = new RequestTableModel();
+        return requestTableModel;
+    }
+
 
 
     @Override
     public void addSelectedItem() {
 
-
-        this.changeList = ui.getRevListTable();
-        ChangeTableModel model = (ChangeTableModel) this.changeList.getModel();
-        List<Change> selectedChanges = model.getChangesAt(changeList.getSelectedRows());
-
-        // ListSelectionModel obj = changeList.getSelectionModel();
-
-        System.out.println(" >>>>>>>>>>>>>>>>> " + changeList.getSelectedRows());
-        System.out.println(" >>>>>>>>>>>>>>>>> " + changeList.getSelectionModel().getSelectionMode());
-
-        ListSelectionModel aa = changeList.getSelectionModel();
-
-        System.out.println(" ################# " + aa.toString());
-        System.out.println(" ################# " + aa.getLeadSelectionIndex());
-
-        // ui.getRequestList().setModel(getSelectedChange(c));
-
+        System.out.println(" >>>>>> " + this.changeList.getSelectedRow());
+        System.out.println(getChangedTableModel().getChangeAtRow(this.changeList.getSelectedRow()));
+        getRequestTableModel().addChange(getChangedTableModel().getChangeAtRow(this.changeList.getSelectedRow()));
     }
 
-    public static class ChangeTableModel extends DefaultTableModel {
+
+
+    public static class RequestTableModel extends AbstractTableModel {
 
         private ArrayList<Change> changes = new ArrayList<>();;
 
@@ -251,6 +295,13 @@ public class DeplorControllerImpl implements DeplorController, InitializingBean 
         public void setChanges(Set<Change> newData) {
 
             this.changes = new ArrayList<Change>(newData);
+            fireTableDataChanged();
+        }
+
+
+        public void addChange(Change changeAtRow) {
+
+            changes.add(changeAtRow);
             fireTableDataChanged();
         }
 
@@ -264,6 +315,10 @@ public class DeplorControllerImpl implements DeplorController, InitializingBean 
 
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
+
+            if (changes == null || changes.size() == 0) {
+                return null;
+            }
 
             switch (columnIndex) {
                 case 0:
@@ -321,64 +376,10 @@ public class DeplorControllerImpl implements DeplorController, InitializingBean 
     }
 
 
-    public TableModel getSelectedChange(final Change c) {
+    @Override
+    public void removeRequestItems() {
 
-        ui.getRevListTable().getSelectedRows();
-
-        return null;
-        // return new DefaultTableModel() {
-        //
-        // @Override
-        // public Object getValueAt(int rowIndex, int columnIndex) {
-        //
-        // switch (columnIndex) {
-        // case 0:
-        //
-        // return rvl;
-        // case 1:
-        // return list.get(rowIndex).getPath();
-        //
-        // }
-        //
-        // return null;
-        //
-        // }
-        //
-        //
-        // @Override
-        // public int getRowCount() {
-        //
-        // return list.size();
-        // }
-        //
-        //
-        // @Override
-        // public int getColumnCount() {
-        //
-        // return 2;
-        // }
-        //
-        //
-        // @Override
-        // public String getColumnName(int column) {
-        //
-        // switch (column) {
-        // case 0:
-        // return "Revision";
-        // case 1:
-        // return "Type";
-        // case 2:
-        // return "Owner";
-        // case 3:
-        // return "Path";
-        // case 4:
-        // return "Branch";
-        //
-        // }
-        // return null;
-        // }
-        // };
+        System.out.println(" >> Remove Click");
     }
-
 
 }
