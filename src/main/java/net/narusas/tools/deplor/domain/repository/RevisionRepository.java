@@ -1,5 +1,6 @@
 package net.narusas.tools.deplor.domain.repository;
 
+
 import java.util.List;
 
 import net.narusas.tools.deplor.domain.model.Branch;
@@ -11,6 +12,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RevisionRepository extends JpaRepository<Revision, Long> {
 
-	Revision findOneByBranchAndVersion(Branch branch, long version);
+    Revision findOneByBranchAndVersion(Branch branch, long version);
+
+
+    List<Revision> findByBranch(String selectedBranch);
 
 }
