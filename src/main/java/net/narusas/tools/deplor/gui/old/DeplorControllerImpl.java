@@ -1,4 +1,4 @@
-package net.narusas.tools.deplor.gui;
+package net.narusas.tools.deplor.gui.old;
 
 
 import java.util.ArrayList;

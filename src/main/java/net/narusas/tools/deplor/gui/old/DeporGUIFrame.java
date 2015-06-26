@@ -1,4 +1,4 @@
-package net.narusas.tools.deplor.gui;
+package net.narusas.tools.deplor.gui.old;
 
 
 import java.awt.BorderLayout;
@@ -31,6 +31,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import net.narusas.tools.deplor.gui.DeplorHistoryFrame;
 
 
 public class DeporGUIFrame extends JFrame {

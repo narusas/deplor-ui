@@ -10,6 +10,7 @@ import java.awt.SystemColor;
 
 import javax.swing.AbstractListModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -27,6 +28,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import net.narusas.tools.deplor.gui.old.DeplorController;
+
 
 public class DeplorGUI extends JFrame {
 
@@ -36,6 +39,7 @@ public class DeplorGUI extends JFrame {
     private JTable table_1;
     private JTextField textField_1;
     private JPasswordField passwordField;
+    private DeplorController dController;
 
 
     /**
@@ -109,9 +113,10 @@ public class DeplorGUI extends JFrame {
         panel_6.add(textField);
         textField.setColumns(7);
 
-        JButton btnNewButton = new JButton("search");
+        JButton btnNewButton = new JButton("");
+        btnNewButton.setIcon(new ImageIcon(DeplorGUI.class.getResource("/icons/application_form_magnify.png")));
         btnNewButton.setMargin(new Insets(2, 2, 2, 2));
-        btnNewButton.setPreferredSize(new Dimension(76, 27));
+        btnNewButton.setPreferredSize(new Dimension(40, 25));
         panel_6.add(btnNewButton);
 
         JPanel panel_2 = new JPanel();
@@ -124,6 +129,7 @@ public class DeplorGUI extends JFrame {
         panel_2.add(panel_3, BorderLayout.NORTH);
 
         JButton historyButton = new JButton("History");
+        historyButton.setIcon(new ImageIcon(DeplorGUI.class.getResource("/icons/application_cascade.png")));
         panel_3.add(historyButton);
 
         JPanel panel_5 = new JPanel();
@@ -154,9 +160,12 @@ public class DeplorGUI extends JFrame {
         scrollPane_1.setViewportView(table);
 
         JPanel panel_8 = new JPanel();
+        FlowLayout flowLayout_1 = (FlowLayout) panel_8.getLayout();
         panel_7.add(panel_8, BorderLayout.SOUTH);
 
-        JButton btnAdd = new JButton("add deploy");
+        JButton btnAdd = new JButton("");
+        btnAdd.setIcon(new ImageIcon(DeplorGUI.class.getResource("/icons/application_put.png")));
+        btnAdd.setSelectedIcon(new ImageIcon(DeplorGUI.class.getResource("/icons/application_put.png")));
         panel_8.add(btnAdd);
 
         JPanel panel_9 = new JPanel();
@@ -211,19 +220,25 @@ public class DeplorGUI extends JFrame {
 
         textField_1 = new JTextField();
         panel_11.add(textField_1);
-        textField_1.setColumns(8);
+        textField_1.setColumns(5);
 
         JLabel lblNewLabel_1 = new JLabel("Pass");
         panel_11.add(lblNewLabel_1);
 
         passwordField = new JPasswordField();
-        passwordField.setColumns(8);
+        passwordField.setColumns(5);
         panel_11.add(passwordField);
+
+        JButton btnNewButton_1 = new JButton("");
+        btnNewButton_1.setMargin(new Insets(2, 4, 2, 4));
+        btnNewButton_1.setIcon(new ImageIcon(DeplorGUI.class.getResource("/icons/lock_go.png")));
+        panel_11.add(btnNewButton_1);
 
         JPanel panel_4 = new JPanel();
         contentPane.add(panel_4, BorderLayout.SOUTH);
 
         JButton submitButton = new JButton("Submit");
+        submitButton.setIcon(new ImageIcon(DeplorGUI.class.getResource("/icons/accept.png")));
         panel_4.add(submitButton);
     }
 
