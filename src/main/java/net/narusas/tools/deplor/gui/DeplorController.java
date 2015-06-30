@@ -33,14 +33,17 @@ public interface DeplorController {
      * process : initial branch list
      * 
      */
-    void initBranchList();
+    // void initBranchList();
+
+
+    void eventBranchList();
 
 
     /**
      * process : initial revision list
      * 
      */
-    void initRevisionList();
+    void eventRevisionList();
 
 
 

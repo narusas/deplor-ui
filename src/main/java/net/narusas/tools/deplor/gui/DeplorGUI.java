@@ -201,9 +201,11 @@ public class DeplorGUI extends JFrame {
             @Override
             public void itemStateChanged(ItemEvent e) {
 
-                dController.initBranchList();
+                dController.eventBranchList();
             }
         });
+
+
         panel_10.add(repositoryList);
 
         JLabel lblBranch = new JLabel("Branch");
@@ -215,9 +217,10 @@ public class DeplorGUI extends JFrame {
             @Override
             public void itemStateChanged(ItemEvent e) {
 
-                dController.initRevisionList();
+                dController.eventRevisionList();
             }
         });
+
         panel_10.add(branchList);
 
         loginPanel = new JPanel();

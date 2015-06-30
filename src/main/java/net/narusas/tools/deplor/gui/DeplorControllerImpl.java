@@ -33,6 +33,8 @@ public class DeplorControllerImpl implements DeplorController {
 
 
     private RepositoryListModel repoListModel;
+    private BranchListModel branchListModel;
+    private RevisionListModel revisionListModel;
 
 
     @Override
@@ -41,10 +43,11 @@ public class DeplorControllerImpl implements DeplorController {
         this.repoListModel = new RepositoryListModel();
         ui.getRepositoryList().setModel(repoListModel);
 
+        this.branchListModel = new BranchListModel();
+        ui.getBranchList().setModel(branchListModel);
 
-        // initRepositoryList();
-        // initBranchList();
-        // initRevisionList();
+        this.revisionListModel = new RevisionListModel();
+        ui.getRevisionList().setModel(revisionListModel);
 
     }
 
@@ -96,13 +99,16 @@ public class DeplorControllerImpl implements DeplorController {
      */
     class RepositoryListModel extends DefaultComboBoxModel {
 
-        List<Repository> repositoryList = new ArrayList<>();
+        List<RepositoryLabel> repositoryList = new ArrayList<>();
 
 
         private void updateRepository() {
 
-            repositoryList = repoRepository.findAll();
-
+            repositoryList.clear();
+            List<Repository> temp = repoRepository.findAll();
+            for (Repository repository : temp) {
+                repositoryList.add(new RepositoryLabel(repository));
+            }
             fireContentsChanged(this, 0, getSize());
         }
 
@@ -117,7 +123,7 @@ public class DeplorControllerImpl implements DeplorController {
         @Override
         public Object getElementAt(int index) {
 
-            return new RepositoryLabel(repositoryList.get(index));
+            return repositoryList.get(index);
         }
 
 
@@ -151,39 +157,103 @@ public class DeplorControllerImpl implements DeplorController {
 
 
 
-    /**
-     * process : initial branch list
-     * 
-     */
-    @SuppressWarnings("unchecked")
+    /*** START >> Branch ***************************************************************/
     @Override
-    public void initBranchList() {
+    public void eventBranchList() {
 
-        selectedRepository = (String) ui.getRepositoryList().getSelectedItem();
+        // Parameter : Selected Respository
+        String selectedRepository = String.valueOf(ui.getRepositoryList().getSelectedItem());
+        branchListModel.updateBranch(selectedRepository);
 
-        final List<Branch> branchList = branchRepository.findByRepositoryName(selectedRepository);
+    }
 
-        DefaultComboBoxModel<String> boxModel = new DefaultComboBoxModel<String>();
-        boxModel.addElement("select");
 
-        for (Branch branch : branchList) {
-            boxModel.addElement(branch.getName());
+    /**
+     * Repository List Model
+     * 
+     * @author ProBook
+     *
+     */
+    class BranchListModel extends DefaultComboBoxModel {
+
+        List<BranchLabel> branchList = new ArrayList<>();
+
+
+        private void updateBranch(String selectedRepository) {
+
+            branchList.clear();
+            List<Branch> temp = branchRepository.findByRepositoryName(selectedRepository);
+            for (Branch branch : temp) {
+                branchList.add(new BranchLabel(branch));
+
+            }
+            fireContentsChanged(this, 0, getSize());
         }
-        ui.getBranchList().setModel(boxModel);
+
+
+        @Override
+        public int getSize() {
+
+            return branchList.size();
+        }
+
+
+        @Override
+        public Object getElementAt(int index) {
+
+            return branchList.get(index);
+        }
+
 
 
     }
 
 
+    /**
+     * toString 를 위한 Wrapping class
+     * 
+     * @author ProBook
+     *
+     */
+    class BranchLabel {
+
+        @Getter private Branch branch;
+
+
+        public BranchLabel(Branch branch) {
+
+            this.branch = branch;
+        }
+
+
+        @Override
+        public String toString() {
+
+            return branch.getName();
+        }
+
+    }
+
+
+    /*** END >> Branch ***************************************************************/
+
+
+
+    /*** START >> Revision ************************************************************/
 
     /**
      * process : initial revision list
      * 
      */
     @Override
-    public void initRevisionList() {
+    public void eventRevisionList() {
 
-        selectedBranch = (String) ui.getBranchList().getSelectedItem();
+        Branch selectedBranch = (Branch) ui.getBranchList().getSelectedItem();
+
+        revisionListModel.updateRevision(selectedBranch);
+
+
+
         System.out.println(" >> branch : " + selectedBranch);
         //
         // final List<Revision> revisionList = revisionRepository.findByBranch(selectedBranch);
@@ -194,40 +264,75 @@ public class DeplorControllerImpl implements DeplorController {
         //
 
 
-        // RevisionListModel aaa = new RevisionListModel(revisionRepository);
-        // aaa.updateBranch(selectedBranch);
-        //
-        // ui.getRevisionList().setModel(aaa);
     }
 
 
 
     class RevisionListModel extends AbstractListModel {
 
-        List<Revision> revision = new ArrayList<>();
+        List<RevisionLabel> revisionList = new ArrayList<>();
 
 
-        private void updateBranch(String branch) {
+        private void updateRevision(Branch selectedBranch) {
 
-            revision = revisionRepository.findByBranch(branch);
+            revisionList.clear();
+            List<Revision> temp = selectedBranch.getRevisions();
+            for (Revision revision : temp) {
+
+                revisionList.add(new RevisionLabel(revision));
+            }
             fireContentsChanged(this, 0, getSize());
+        }
+
+
+        // Search Filter
+        private void setFilter() {
+
         }
 
 
         @Override
         public int getSize() {
 
-            return revision.size();
+            return revisionList.size();
         }
 
 
         @Override
         public Object getElementAt(int index) {
 
-            return revision.get(index);
+            return revisionList.get(index);
         }
 
     }
+
+
+    /**
+     * toString 를 위한 Wrapping class
+     * 
+     * @author ProBook
+     *
+     */
+    class RevisionLabel {
+
+        @Getter private Revision revision;
+
+
+        public RevisionLabel(Revision revision) {
+
+            this.revision = revision;
+        }
+
+
+        @Override
+        public String toString() {
+
+            return "- " + revision.getVersion() + " : " + revision.getAuthor();
+        }
+
+    }
+
+
     /**
      * process : search revision
      * 
@@ -240,7 +345,7 @@ public class DeplorControllerImpl implements DeplorController {
      * process : set revision information & change list
      */
 
-
+    /*** END >> Revision ************************************************************/
 
     /**
      * process : add request list
