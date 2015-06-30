@@ -37,8 +37,8 @@ public class DeplorGUI extends JFrame {
 
     private JPanel contentPane;
     private JTextField revFilterKeyword;
-    private JTable table;
-    private JTable table_1;
+    private JTable changeListTable;
+    private JTable requestListTable;
     private JTextField loginId;
     private JPasswordField loginPass;
     private DeplorController dController;
@@ -46,7 +46,8 @@ public class DeplorGUI extends JFrame {
     private JComboBox repositoryList;
     private JComboBox branchList;
     private JList revisionList;
-    private JButton revisionFilterBtn;
+    private JTextArea infoRevisionTextArea;
+    private JButton btnAdd;
 
 
     /**
@@ -76,7 +77,7 @@ public class DeplorGUI extends JFrame {
     public DeplorGUI(final DeplorController dController) {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 972, 531);
+        setBounds(100, 100, 1000, 650);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         contentPane.setLayout(new BorderLayout(0, 0));
@@ -95,21 +96,27 @@ public class DeplorGUI extends JFrame {
         panel_6.setBackground(SystemColor.activeCaption);
         panel_1.add(panel_6, BorderLayout.SOUTH);
 
+        JLabel label = new JLabel("");
+        label.setIcon(new ImageIcon(DeplorGUI.class.getResource("/icons/zoom.png")));
+        panel_6.add(label);
+
         revFilterKeyword = new JTextField();
         panel_6.add(revFilterKeyword);
-        revFilterKeyword.setColumns(7);
-
-        revisionFilterBtn = new JButton("");
-        revisionFilterBtn.setIcon(new ImageIcon(DeplorGUI.class.getResource("/icons/application_form_magnify.png")));
-        revisionFilterBtn.setMargin(new Insets(2, 2, 2, 2));
-        revisionFilterBtn.setPreferredSize(new Dimension(40, 25));
-        panel_6.add(revisionFilterBtn);
+        revFilterKeyword.setColumns(10);
 
         JScrollPane revisionScrollPane = new JScrollPane();
         revisionScrollPane.setPreferredSize(new Dimension(100, 2));
         panel_1.add(revisionScrollPane, BorderLayout.CENTER);
 
         revisionList = new JList();
+        revisionList.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+                dController.eventRevisionInfoText();
+            }
+        });
 
         revisionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         revisionScrollPane.setViewportView(revisionList);
@@ -131,13 +138,6 @@ public class DeplorGUI extends JFrame {
         panel_2.add(panel_5, BorderLayout.CENTER);
         panel_5.setLayout(new BorderLayout(0, 0));
 
-        JTextArea infoRevisionTextArea = new JTextArea();
-        infoRevisionTextArea.setBackground(SystemColor.info);
-        infoRevisionTextArea.setEditable(false);
-        infoRevisionTextArea.setMargin(new Insets(5, 5, 5, 5));
-        infoRevisionTextArea.setPreferredSize(new Dimension(4, 40));
-        panel_5.add(infoRevisionTextArea, BorderLayout.NORTH);
-
         JSplitPane splitPane_1 = new JSplitPane();
         splitPane_1.setResizeWeight(0.4);
         splitPane_1.setOrientation(JSplitPane.VERTICAL_SPLIT);
@@ -149,17 +149,26 @@ public class DeplorGUI extends JFrame {
         panel_7.setLayout(new BorderLayout(0, 0));
 
         JScrollPane scrollPane_1 = new JScrollPane();
+        scrollPane_1.setPreferredSize(new Dimension(2, 60));
         panel_7.add(scrollPane_1, BorderLayout.CENTER);
 
-        table = new JTable();
-        scrollPane_1.setViewportView(table);
+        changeListTable = new JTable();
+        scrollPane_1.setViewportView(changeListTable);
 
         JPanel panel_8 = new JPanel();
         FlowLayout flowLayout_1 = (FlowLayout) panel_8.getLayout();
         panel_7.add(panel_8, BorderLayout.SOUTH);
 
-        JButton btnAdd = new JButton("");
-        btnAdd.setIcon(new ImageIcon(DeplorGUI.class.getResource("/icons/application_put.png")));
+        btnAdd = new JButton("add");
+        btnAdd.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+                dController.eventAddRequestList();
+            }
+        });
+        btnAdd.setIcon(new ImageIcon(DeplorGUI.class.getResource("/icons/add.png")));
         btnAdd.setSelectedIcon(new ImageIcon(DeplorGUI.class.getResource("/icons/application_put.png")));
         panel_8.add(btnAdd);
 
@@ -172,8 +181,21 @@ public class DeplorGUI extends JFrame {
         JScrollPane scrollPane_2 = new JScrollPane();
         panel_9.add(scrollPane_2, BorderLayout.CENTER);
 
-        table_1 = new JTable();
-        scrollPane_2.setViewportView(table_1);
+        requestListTable = new JTable();
+        scrollPane_2.setViewportView(requestListTable);
+
+        JScrollPane scrollPane_3 = new JScrollPane();
+        scrollPane_3.setPreferredSize(new Dimension(2, 70));
+        panel_5.add(scrollPane_3, BorderLayout.NORTH);
+
+        infoRevisionTextArea = new JTextArea();
+        infoRevisionTextArea.setLineWrap(true);
+        infoRevisionTextArea.setBackground(new Color(255, 255, 224));
+        infoRevisionTextArea.setPreferredSize(new Dimension(4, 4));
+        infoRevisionTextArea.setMargin(new Insets(5, 5, 5, 5));
+        infoRevisionTextArea.setRows(4);
+        infoRevisionTextArea.setEditable(false);
+        scrollPane_3.setViewportView(infoRevisionTextArea);
 
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Deploy Comment", TitledBorder.LEADING,
@@ -309,8 +331,26 @@ public class DeplorGUI extends JFrame {
     }
 
 
-    public JButton getRevisionFilterBtn() {
+    public JTextArea getInfoRevisionTextArea() {
 
-        return revisionFilterBtn;
+        return infoRevisionTextArea;
+    }
+
+
+    public JTable getChangeListTable() {
+
+        return changeListTable;
+    }
+
+
+    public JButton getBtnAdd() {
+
+        return btnAdd;
+    }
+
+
+    public JTable getRequestListTable() {
+
+        return requestListTable;
     }
 }

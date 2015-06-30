@@ -13,9 +13,4 @@ public interface BranchRepository extends JpaRepository<Branch, Long> {
 
     List<Branch> findByRepositoryName(String selectedRepository);
 
-
-    Long findByBranch(String selectedBranch);
-
-
-
 }

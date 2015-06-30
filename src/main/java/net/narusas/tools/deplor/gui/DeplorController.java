@@ -46,17 +46,10 @@ public interface DeplorController {
     void eventRevisionList();
 
 
-
-    /**
-     * process : search revision
-     * 
-     * 
-     */
-
-
     /**
      * process : set revision information & change list
      */
+    void eventRevisionInfoText();
 
 
 
@@ -64,7 +57,7 @@ public interface DeplorController {
      * process : add request list
      */
 
-
+    void eventAddRequestList();
 
     /**
      * process : submit deploy

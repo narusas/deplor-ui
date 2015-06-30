@@ -1,20 +1,30 @@
 package net.narusas.tools.deplor.gui;
 
 
+import static net.narusas.tools.deplor.deploy.UIUtil.col;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.AbstractListModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.TableColumnModel;
 
 import lombok.Getter;
 import net.narusas.tools.deplor.domain.model.Branch;
+import net.narusas.tools.deplor.domain.model.Change;
 import net.narusas.tools.deplor.domain.model.Repository;
 import net.narusas.tools.deplor.domain.model.Revision;
 import net.narusas.tools.deplor.domain.repository.BranchRepository;
 import net.narusas.tools.deplor.domain.repository.RepoRepository;
 import net.narusas.tools.deplor.domain.repository.RevisionRepository;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -35,11 +45,16 @@ public class DeplorControllerImpl implements DeplorController {
     private RepositoryListModel repoListModel;
     private BranchListModel branchListModel;
     private RevisionListModel revisionListModel;
+    private ChangeListModel changeListModel;
+    private RequestTableModel requestTableModel;
 
 
     @Override
     public void init() {
 
+        System.out.println(" << init GUI >>");
+
+        // initialize model
         this.repoListModel = new RepositoryListModel();
         ui.getRepositoryList().setModel(repoListModel);
 
@@ -48,6 +63,43 @@ public class DeplorControllerImpl implements DeplorController {
 
         this.revisionListModel = new RevisionListModel();
         ui.getRevisionList().setModel(revisionListModel);
+
+        this.changeListModel = new ChangeListModel();
+        ui.getChangeListTable().setModel(changeListModel);
+
+        this.requestTableModel = new RequestTableModel();
+        ui.getRequestListTable().setModel(requestTableModel);
+
+
+
+        // Event Listener : revisions filter
+        ui.getRevFilterKeyword().getDocument().addDocumentListener(new DocumentListener() {
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+
+                revisionListModel.setFilter(ui.getRevFilterKeyword().getText());
+            }
+
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+
+                revisionListModel.setFilter(ui.getRevFilterKeyword().getText());
+            }
+
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+
+                revisionListModel.setFilter(ui.getRevFilterKeyword().getText());
+            }
+
+        });
+
+
+        ui.getChangeListTable().setColumnModel(getChangeTableColumnModel());
+        ui.getRequestListTable().setColumnModel(getRequestTableColumnModel());
 
     }
 
@@ -162,8 +214,9 @@ public class DeplorControllerImpl implements DeplorController {
     public void eventBranchList() {
 
         // Parameter : Selected Respository
-        String selectedRepository = String.valueOf(ui.getRepositoryList().getSelectedItem());
-        branchListModel.updateBranch(selectedRepository);
+        RepositoryLabel selectedRepository = (RepositoryLabel) ui.getRepositoryList().getSelectedItem();
+
+        branchListModel.updateBranch(selectedRepository.getRepository());
 
     }
 
@@ -179,10 +232,10 @@ public class DeplorControllerImpl implements DeplorController {
         List<BranchLabel> branchList = new ArrayList<>();
 
 
-        private void updateBranch(String selectedRepository) {
+        private void updateBranch(Repository selectedRepository) {
 
             branchList.clear();
-            List<Branch> temp = branchRepository.findByRepositoryName(selectedRepository);
+            List<Branch> temp = selectedRepository.getBranches();
             for (Branch branch : temp) {
                 branchList.add(new BranchLabel(branch));
 
@@ -248,32 +301,22 @@ public class DeplorControllerImpl implements DeplorController {
     @Override
     public void eventRevisionList() {
 
-        Branch selectedBranch = (Branch) ui.getBranchList().getSelectedItem();
-
-        revisionListModel.updateRevision(selectedBranch);
-
-
-
-        System.out.println(" >> branch : " + selectedBranch);
-        //
-        // final List<Revision> revisionList = revisionRepository.findByBranch(selectedBranch);
-        // DefaultListModel model = new DefaultListModel();
-        // for (Revision revision : revisionList) {
-        // model.addElement(revision);
-        // }
-        //
-
+        BranchLabel branch = (BranchLabel) ui.getBranchList().getSelectedItem();
+        revisionListModel.updateRevision(branch.getBranch());
 
     }
-
 
 
     class RevisionListModel extends AbstractListModel {
 
         List<RevisionLabel> revisionList = new ArrayList<>();
+        List<Revision> filterList = new ArrayList<>();
 
 
         private void updateRevision(Branch selectedBranch) {
+
+
+            filterList = selectedBranch.getRevisions();
 
             revisionList.clear();
             List<Revision> temp = selectedBranch.getRevisions();
@@ -286,8 +329,16 @@ public class DeplorControllerImpl implements DeplorController {
 
 
         // Search Filter
-        private void setFilter() {
+        private void setFilter(String keyword) {
 
+            revisionList.clear();
+            List<Revision> temp = filterList;
+            for (Revision revision : temp) {
+                if (revision.getAuthor().getName().contains(keyword) == true) {
+                    revisionList.add(new RevisionLabel(revision));
+                }
+            }
+            fireContentsChanged(this, 0, getSize());
         }
 
 
@@ -327,31 +378,227 @@ public class DeplorControllerImpl implements DeplorController {
         @Override
         public String toString() {
 
-            return "- " + revision.getVersion() + " : " + revision.getAuthor();
+            String isMessage = "";
+            if (!StringUtils.isEmpty(revision.getMessage())) {
+                isMessage = "(MSG)";
+            }
+            return "- " + revision.getVersion() + " : " + revision.getAuthor().getName() + " : " + isMessage;
         }
-
     }
-
-
-    /**
-     * process : search revision
-     * 
-     * 
-     */
 
 
 
     /**
      * process : set revision information & change list
      */
+    @Override
+    public void eventRevisionInfoText() {
+
+        RevisionLabel revision = (RevisionLabel) ui.getRevisionList().getSelectedValue();
+
+        String revTxt = revision.getRevision().getTimestamp() + "  /  " + revision.getRevision().getAuthor().getName();
+
+        if (StringUtils.isNotBlank(revision.getRevision().getMessage())) {
+            revTxt += "\n========<< MESSAGE >>===========\n" + revision.getRevision().getMessage();
+        }
+
+        ui.getInfoRevisionTextArea().setText(revTxt);
+
+
+        changeListModel.updateChange(revision.getRevision());
+    }
+
+
+    private TableColumnModel getChangeTableColumnModel() {
+
+        return new ChangeTableColumnModel();
+    }
+
+    @SuppressWarnings("serial")
+    class ChangeTableColumnModel extends DefaultTableColumnModel {
+
+        public ChangeTableColumnModel() {
+
+            addColumn(col(0, 140, "Revision"));
+            addColumn(col(1, 70, "Type"));
+            addColumn(col(2, 70, "Owner"));
+            addColumn(col(3, 350, "Path"));
+            addColumn(col(4, "Branch"));
+        }
+    }
+
+    class ChangeListModel extends AbstractTableModel {
+
+        List<Change> changeList = new ArrayList<>();
+
+
+        private void updateChange(Revision selectedRevision) {
+
+
+            changeList.clear();
+            List<Change> changes = selectedRevision.getChanges();
+            changeList = new ArrayList<>(changes);
+            fireTableDataChanged();
+        }
+
+
+        @Override
+        public int getRowCount() {
+
+            return changeList.size();
+        }
+
+
+        @Override
+        public int getColumnCount() {
+
+            return 5;
+        }
+
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+
+            switch (columnIndex) {
+                case 0:
+                    return changeList.get(rowIndex).getRevision();
+                case 1:
+                    return changeList.get(rowIndex).getType();
+                case 2:
+                    return changeList.get(rowIndex).getRevision().getAuthor().getName();
+                case 3:
+                    return changeList.get(rowIndex).getPath();
+                case 4:
+                    return changeList.get(rowIndex).getRevision().getBranch().getName();
+
+            }
+            return null;
+        }
+    }
+
+
 
     /*** END >> Revision ************************************************************/
+
+
 
     /**
      * process : add request list
      */
+    @Override
+    public void eventAddRequestList() {
+
+        ui.getRequestListTable().getSelectedRow();
+
+        // XXX this.requestTableModel.addChange(this.changeListModel.getValueAt(ui.getRequestListTable().getSelectedRow()));
+    }
 
 
+    private TableColumnModel getRequestTableColumnModel() {
+
+        return new RequestTableColumnModel();
+    }
+
+    @SuppressWarnings("serial")
+    class RequestTableColumnModel extends DefaultTableColumnModel {
+
+        public RequestTableColumnModel() {
+
+            addColumn(col(0, 140, "Revision"));
+            addColumn(col(1, 70, "Type"));
+            addColumn(col(2, 70, "Owner"));
+            addColumn(col(3, 350, "Path"));
+            addColumn(col(4, "Branch"));
+        }
+    }
+
+    public static class RequestTableModel extends AbstractTableModel {
+
+        private ArrayList<Change> changes = new ArrayList<>();;
+
+
+        public void setChanges(Set<Change> newData) {
+
+            this.changes = new ArrayList<Change>(newData);
+            fireTableDataChanged();
+        }
+
+
+        public void addChange(Change changeAtRow) {
+
+            changes.add(changeAtRow);
+            fireTableDataChanged();
+        }
+
+
+        public List<Change> getChangesAt(int[] selectedRows) {
+
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+
+            if (changes == null || changes.size() == 0) {
+                return null;
+            }
+
+            switch (columnIndex) {
+                case 0:
+                    return changes.get(rowIndex).getRevision();
+                case 1:
+                    return changes.get(rowIndex).getType();
+                case 2:
+                    return "Owner";
+                case 3:
+                    return changes.get(rowIndex).getPath();
+                case 4:
+                    return changes.get(rowIndex).getId(); // branch
+
+            }
+
+            return null;
+
+        }
+
+
+        @Override
+        public int getRowCount() {
+
+            return changes.size();
+        }
+
+
+        @Override
+        public int getColumnCount() {
+
+            return 5;
+        }
+
+
+        @Override
+        public String getColumnName(int column) {
+
+            switch (column) {
+                case 0:
+                    return "Revision";
+                case 1:
+                    return "Type";
+                case 2:
+                    return "Owner";
+                case 3:
+                    return "Path";
+                case 4:
+                    return "Branch";
+
+            }
+            return null;
+        }
+
+
+    }
 
     /**
      * process : submit deploy
