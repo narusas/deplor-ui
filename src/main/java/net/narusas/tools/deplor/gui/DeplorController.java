@@ -33,27 +33,23 @@ public interface DeplorController {
      * process : initial branch list
      * 
      */
-    void initBranchList();
+    // void initBranchList();
+
+
+    void eventBranchList();
 
 
     /**
      * process : initial revision list
      * 
      */
-    void initRevisionList();
-
-
-
-    /**
-     * process : search revision
-     * 
-     * 
-     */
+    void eventRevisionList();
 
 
     /**
      * process : set revision information & change list
      */
+    void eventRevisionInfoText();
 
 
 
@@ -61,7 +57,7 @@ public interface DeplorController {
      * process : add request list
      */
 
-
+    void eventAddRequestList();
 
     /**
      * process : submit deploy

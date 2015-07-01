@@ -51,7 +51,7 @@ public class JpaConfig {
         // factory.setMappingResources("META-INF/orm.xml");
         factory.setDataSource(dataSource);
         factory.setLoadTimeWeaver(new InstrumentationLoadTimeWeaver());
-        
+
         factory.afterPropertiesSet();
         return factory.getObject();
     }
@@ -104,8 +104,8 @@ public class JpaConfig {
         org.apache.tomcat.jdbc.pool.DataSource ds = new org.apache.tomcat.jdbc.pool.DataSource();
         ds.setDriverClassName("com.mysql.jdbc.Driver");
         ds.setUrl("jdbc:mysql://localhost:3306/deplor?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull");
-        ds.setUsername("deplor");
-        ds.setPassword("deplor");
+        ds.setUsername("root");
+        ds.setPassword("");
         ds.setInitSQL("select 1");
         ds.setMaxActive(400);
         ds.setValidationQuery("select 1");
