@@ -48,30 +48,30 @@ public class ReporterTest {
     @Test
     public void createDeploymentRequest() {
 
-        Repository repo = repoRepository.findAll().get(0);
-        Branch branch = repo.getBranche("trunk");
-
-        // 사용자의 계정을 입력받아 해당하는 Account 를 찾아온다
-        Account account = accountRepository.findOneByName("jsan");
-
-        Revision revision = revisionRepository.findOneByBranchAndVersion(branch, 811L);
-        assertNotNull(revision);
-        System.out.println("##########" + revision);
-
-        DeploymentRequest request = new DeploymentRequest();
-        request.setAuthor(account);
-        request.setMessage("테스트 한글 메시지");
-        request.setBranch(branch);
-
-        for (Change change : revision.getChanges()) {
-            System.out.println(change);
-            request.addChange(change);
-        }
-
-        // 제출 시간은 저장 직전에 넣어 주는게 좋다
-        request.setTimestamp(new Date());
-        request.setStatus(DeploymentStatus.제출됨);
-        deploymentRepository.save(request);
+//        Repository repo = repoRepository.findAll().get(0);
+//        Branch branch = repo.getBranche("trunk");
+//
+//        // 사용자의 계정을 입력받아 해당하는 Account 를 찾아온다
+//        Account account = accountRepository.findOneByName("jsan");
+//
+//        Revision revision = revisionRepository.findOneByBranchAndVersion(branch, 811L);
+//        assertNotNull(revision);
+//        System.out.println("##########" + revision);
+//
+//        DeploymentRequest request = new DeploymentRequest();
+//        request.setAuthor(account);
+//        request.setMessage("테스트 한글 메시지");
+//        request.setBranch(branch);
+//
+//        for (Change change : revision.getChanges()) {
+//            System.out.println(change);
+//            request.addChange(change);
+//        }
+//
+//        // 제출 시간은 저장 직전에 넣어 주는게 좋다
+//        request.setTimestamp(new Date());
+//        request.setStatus(DeploymentStatus.제출됨);
+//        deploymentRepository.save(request);
     }
 
 
@@ -90,12 +90,12 @@ public class ReporterTest {
     @Test
     public void getRequestHistory() {
 
-        Account account = accountRepository.findOneByName("jsan");
-        List<DeploymentRequest> requests = deploymentRepository.findByAuthorOrderByTimestamp(account);
-        assertNotNull(requests);
-        for (DeploymentRequest deploymentRequest : requests) {
-            System.out.println("###" + deploymentRequest);
-        }
+//        Account account = accountRepository.findOneByName("jsan");
+//        List<DeploymentRequest> requests = deploymentRepository.findByAuthorOrderByTimestamp(account);
+//        assertNotNull(requests);
+//        for (DeploymentRequest deploymentRequest : requests) {
+//            System.out.println("###" + deploymentRequest);
+//        }
     }
 
 
