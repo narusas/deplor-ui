@@ -35,25 +35,29 @@ import javax.swing.JList;
 import javax.swing.AbstractListModel;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.JTabbedPane;
 
 @SuppressWarnings("serial")
-public class DeployFrame extends JFrame {
+public class UI extends JFrame {
 
-	private JPanel				contentPane;
-	private JTextField			requestFilteringTextField;
-	private JTable				requestsTable;
-	private JTable				workingSetTable;
-	private JTable				requestChangesTable;
-	private JTable				deploySetsChangesTable;
-	private JTable				candidatesChangesTable;
-	private JTable				deployHistoryTable;
-	private JTable				candidatesDeploySetTable;
-	private JList				stageList;
-	private JButton				addToWorkingButton;
-	private JButton				removeRequestButton;
-	private DeployController	controller;
-	private JComboBox			repositoryComboBox;
-	private JComboBox			branchComboBox;
+	private JPanel			contentPane;
+	private JTextField		requestFilteringTextField;
+	private JTable			requestsTable;
+	private JTable			workingSetTable;
+	private JTable			requestChangesTable;
+	private JTable			candidateChangesTable;
+	private JTable			conflictChangesTable;
+	private JTable			deployHistoryTable;
+	private JTable			candidatesDeploySetTable;
+	private JList			stageList;
+	private JButton			addToWorkingButton;
+	private JButton			removeRequestButton;
+	private MainController	controller;
+	private JComboBox		repositoryComboBox;
+	private JComboBox		branchComboBox;
+	private JTable			workingChangesTable;
+	private JTabbedPane		tabbedPane;
+	private JTable			candidateRequestTable;
 
 	/**
 	 * Launch the application.
@@ -63,7 +67,7 @@ public class DeployFrame extends JFrame {
 			@Override
 			public void run() {
 				try {
-					DeployFrame frame = new DeployFrame();
+					UI frame = new UI();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -75,7 +79,7 @@ public class DeployFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public DeployFrame() {
+	public UI() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1270, 710);
 		contentPane = new JPanel();
@@ -84,24 +88,30 @@ public class DeployFrame extends JFrame {
 		setContentPane(contentPane);
 
 		JPanel panel = new JPanel();
+		panel.setBorder(new LineBorder(new Color(0, 0, 0)));
 		contentPane.add(panel, BorderLayout.CENTER);
 		panel.setLayout(new BorderLayout(0, 0));
 
-		JSplitPane splitPane = new JSplitPane();
-		splitPane.setResizeWeight(0.3);
-		splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-		panel.add(splitPane, BorderLayout.CENTER);
+		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		panel.add(tabbedPane, BorderLayout.CENTER);
 
-		JPanel panel_4 = new JPanel();
-		panel_4.setBackground(new Color(173, 216, 230));
-		panel_4.setBorder(new TitledBorder(null, "Working", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		splitPane.setLeftComponent(panel_4);
-		panel_4.setLayout(new BorderLayout(0, 0));
+		JPanel panel_30 = new JPanel();
+		tabbedPane.addTab("1. Working", null, panel_30, null);
+		panel_30.setLayout(new BorderLayout(0, 0));
+
+		JSplitPane splitPane_2 = new JSplitPane();
+		splitPane_2.setResizeWeight(0.5);
+		splitPane_2.setOrientation(JSplitPane.VERTICAL_SPLIT);
+		panel_30.add(splitPane_2, BorderLayout.CENTER);
+
+		JPanel panel_33 = new JPanel();
+		splitPane_2.setLeftComponent(panel_33);
+		panel_33.setLayout(new BorderLayout(0, 0));
 
 		JSplitPane splitPane_1 = new JSplitPane();
+		panel_33.add(splitPane_1, BorderLayout.CENTER);
 		splitPane_1.setBorder(null);
 		splitPane_1.setResizeWeight(0.3);
-		panel_4.add(splitPane_1, BorderLayout.CENTER);
 
 		JPanel panel_6 = new JPanel();
 		panel_6.setBorder(null);
@@ -125,7 +135,7 @@ public class DeployFrame extends JFrame {
 		scrollPane.setViewportView(requestsTable);
 
 		requestFilteringTextField = new JTextField();
-		
+
 		panel_14.add(requestFilteringTextField, BorderLayout.NORTH);
 		requestFilteringTextField.setColumns(10);
 
@@ -136,25 +146,63 @@ public class DeployFrame extends JFrame {
 		addToWorkingButton = new JButton("");
 		addToWorkingButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.addToWorking();
+				controller.선택됨_요청을_작업목록에_추가();
 			}
 		});
 		addToWorkingButton.setToolTipText("Add to Working Set");
-		addToWorkingButton.setIcon(new ImageIcon(DeployFrame.class.getResource("/icons/arrow_right.png")));
+		addToWorkingButton.setIcon(new ImageIcon(UI.class.getResource("/icons/arrow_down.png")));
 		panel_12.add(addToWorkingButton);
+
+		JButton rejectRequestButton = new JButton("");
+		rejectRequestButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.배포요청_거부();
+			}
+		});
+		rejectRequestButton.setIcon(new ImageIcon(UI.class.getResource("/icons/cancel.png")));
+		panel_12.add(rejectRequestButton);
+
+		JButton reviveRequestButton = new JButton("");
+		reviveRequestButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.거부된_배포요청_복구();
+			}
+		});
+		reviveRequestButton.setIcon(new ImageIcon(UI.class.getResource("/icons/key.png")));
+		panel_12.add(reviveRequestButton);
+
+		JButton automaticSelectButton = new JButton("");
+		automaticSelectButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.배포요청_자동선택();
+			}
+		});
+		automaticSelectButton.setIcon(new ImageIcon(UI.class.getResource("/icons/lightbulb.png")));
+		panel_12.add(automaticSelectButton);
 
 		JPanel panel_7 = new JPanel();
 		splitPane_1.setRightComponent(panel_7);
 		panel_7.setLayout(new BorderLayout(0, 0));
 
-		JSplitPane splitPane_2 = new JSplitPane();
-		splitPane_2.setBorder(null);
-		splitPane_2.setResizeWeight(0.5);
-		panel_7.add(splitPane_2, BorderLayout.CENTER);
+		JPanel panel_34 = new JPanel();
+		panel_7.add(panel_34, BorderLayout.CENTER);
+		panel_34.setBorder(new TitledBorder(null, "Changes", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_34.setLayout(new BorderLayout(0, 0));
+
+		JScrollPane scrollPane_2 = new JScrollPane();
+		panel_34.add(scrollPane_2, BorderLayout.CENTER);
+		scrollPane_2.setPreferredSize(new Dimension(70, 70));
+
+		requestChangesTable = new JTable();
+		scrollPane_2.setViewportView(requestChangesTable);
+
+		JSplitPane splitPane_6 = new JSplitPane();
+		splitPane_6.setResizeWeight(0.34);
+		splitPane_2.setRightComponent(splitPane_6);
 
 		JPanel panel_8 = new JPanel();
+		splitPane_6.setLeftComponent(panel_8);
 		panel_8.setBorder(new TitledBorder(null, "Working Set", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		splitPane_2.setLeftComponent(panel_8);
 		panel_8.setLayout(new BorderLayout(0, 0));
 
 		JScrollPane scrollPane_1 = new JScrollPane();
@@ -169,48 +217,49 @@ public class DeployFrame extends JFrame {
 		panel_19.setLayout(new BoxLayout(panel_19, BoxLayout.Y_AXIS));
 
 		removeRequestButton = new JButton("");
+		removeRequestButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.선택된_요청을_작업목록에서_제거(e);
+			}
+		});
 		removeRequestButton.setToolTipText("Remove selected request");
-		removeRequestButton.setIcon(new ImageIcon(DeployFrame.class.getResource("/icons/delete.png")));
+		removeRequestButton.setIcon(new ImageIcon(UI.class.getResource("/icons/delete.png")));
 		panel_19.add(removeRequestButton);
 
 		JButton applyWorkingSetButton = new JButton("");
 		applyWorkingSetButton.setToolTipText("Apply working set");
 		applyWorkingSetButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				controller.작업목록을_배포후보로_반영();
 			}
 		});
-		applyWorkingSetButton.setIcon(new ImageIcon(DeployFrame.class.getResource("/icons/accept.png")));
+		applyWorkingSetButton.setIcon(new ImageIcon(UI.class.getResource("/icons/accept.png")));
 		panel_19.add(applyWorkingSetButton);
 
-		JPanel panel_9 = new JPanel();
-		panel_9.setBorder(new TitledBorder(null, "Changes", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		splitPane_2.setRightComponent(panel_9);
-		panel_9.setLayout(new BorderLayout(0, 0));
-
-		JScrollPane scrollPane_2 = new JScrollPane();
-		scrollPane_2.setPreferredSize(new Dimension(70, 70));
-		panel_9.add(scrollPane_2, BorderLayout.CENTER);
-
-		requestChangesTable = new JTable();
-		scrollPane_2.setViewportView(requestChangesTable);
-
-		JPanel panel_20 = new JPanel();
-		panel_9.add(panel_20, BorderLayout.EAST);
-		panel_20.setLayout(new BoxLayout(panel_20, BoxLayout.Y_AXIS));
-
-		JButton removeChangeFromWorkingSetButton = new JButton("");
-		removeChangeFromWorkingSetButton.setToolTipText("Remove selected change from working set");
-		removeChangeFromWorkingSetButton.setIcon(new ImageIcon(DeployFrame.class.getResource("/icons/delete.png")));
-		panel_20.add(removeChangeFromWorkingSetButton);
+		JPanel panel_4 = new JPanel();
+		splitPane_6.setRightComponent(panel_4);
+		panel_4.setLayout(new BorderLayout(0, 0));
 
 		JPanel panel_5 = new JPanel();
-		splitPane.setRightComponent(panel_5);
+		panel_5.setBorder(new TitledBorder(null, "Changes", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_4.add(panel_5, BorderLayout.CENTER);
 		panel_5.setLayout(new BorderLayout(0, 0));
 
+		JScrollPane scrollPane_8 = new JScrollPane();
+		scrollPane_8.setPreferredSize(new Dimension(70, 70));
+		panel_5.add(scrollPane_8, BorderLayout.CENTER);
+
+		workingChangesTable = new JTable();
+		scrollPane_8.setViewportView(workingChangesTable);
+
+		JPanel panel_31 = new JPanel();
+		tabbedPane.addTab("2. Deploy", null, panel_31, null);
+		panel_31.setLayout(new BorderLayout(0, 0));
+
 		JSplitPane splitPane_3 = new JSplitPane();
-		splitPane_3.setResizeWeight(0.3);
 		splitPane_3.setOrientation(JSplitPane.VERTICAL_SPLIT);
-		panel_5.add(splitPane_3, BorderLayout.CENTER);
+		panel_31.add(splitPane_3, BorderLayout.CENTER);
+		splitPane_3.setResizeWeight(0.5);
 
 		JPanel panel_10 = new JPanel();
 		panel_10.setBackground(new Color(102, 205, 170));
@@ -220,7 +269,7 @@ public class DeployFrame extends JFrame {
 
 		JSplitPane splitPane_4 = new JSplitPane();
 		splitPane_4.setBorder(null);
-		splitPane_4.setResizeWeight(0.2);
+		splitPane_4.setResizeWeight(0.3);
 		panel_10.add(splitPane_4, BorderLayout.CENTER);
 
 		JPanel panel_13 = new JPanel();
@@ -233,13 +282,18 @@ public class DeployFrame extends JFrame {
 		panel_16.setLayout(new BoxLayout(panel_16, BoxLayout.Y_AXIS));
 
 		JButton cloneCandidatesToWorkingButton = new JButton("");
+		cloneCandidatesToWorkingButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.선택된_배포후보의_내역을_작업목록으로_복사();
+			}
+		});
 		cloneCandidatesToWorkingButton.setToolTipText("Clone to Working Set");
-		cloneCandidatesToWorkingButton.setIcon(new ImageIcon(DeployFrame.class.getResource("/icons/arrow_up.png")));
+		cloneCandidatesToWorkingButton.setIcon(new ImageIcon(UI.class.getResource("/icons/arrow_up.png")));
 		panel_16.add(cloneCandidatesToWorkingButton);
 
 		JButton applySelectedCandidateButton = new JButton("");
 		applySelectedCandidateButton.setToolTipText("Apply to Stage");
-		applySelectedCandidateButton.setIcon(new ImageIcon(DeployFrame.class.getResource("/icons/accept.png")));
+		applySelectedCandidateButton.setIcon(new ImageIcon(UI.class.getResource("/icons/accept.png")));
 		panel_16.add(applySelectedCandidateButton);
 
 		JPanel panel_18 = new JPanel();
@@ -254,15 +308,34 @@ public class DeployFrame extends JFrame {
 		scrollPane_3.setViewportView(candidatesDeploySetTable);
 
 		JPanel panel_15 = new JPanel();
-		panel_15.setBorder(new TitledBorder(null, "Changes", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		splitPane_4.setRightComponent(panel_15);
 		panel_15.setLayout(new BorderLayout(0, 0));
 
-		JScrollPane scrollPane_4 = new JScrollPane();
-		panel_15.add(scrollPane_4, BorderLayout.CENTER);
+		JSplitPane splitPane = new JSplitPane();
+		splitPane.setResizeWeight(0.3);
+		panel_15.add(splitPane, BorderLayout.CENTER);
 
-		deploySetsChangesTable = new JTable();
-		scrollPane_4.setViewportView(deploySetsChangesTable);
+		JPanel panel_9 = new JPanel();
+		splitPane.setRightComponent(panel_9);
+		panel_9.setBorder(new TitledBorder(null, "Changes", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_9.setLayout(new BorderLayout(0, 0));
+
+		JScrollPane scrollPane_4 = new JScrollPane();
+		panel_9.add(scrollPane_4);
+
+		candidateChangesTable = new JTable();
+		scrollPane_4.setViewportView(candidateChangesTable);
+
+		JPanel panel_20 = new JPanel();
+		panel_20.setBorder(new TitledBorder(null, "Requests", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		splitPane.setLeftComponent(panel_20);
+		panel_20.setLayout(new BorderLayout(0, 0));
+
+		JScrollPane scrollPane_9 = new JScrollPane();
+		panel_20.add(scrollPane_9, BorderLayout.CENTER);
+
+		candidateRequestTable = new JTable();
+		scrollPane_9.setViewportView(candidateRequestTable);
 
 		JPanel panel_11 = new JPanel();
 		panel_11.setBackground(new Color(205, 92, 92));
@@ -292,8 +365,8 @@ public class DeployFrame extends JFrame {
 		scrollPane_5.setPreferredSize(new Dimension(70, 4));
 		panel_25.add(scrollPane_5, BorderLayout.CENTER);
 
-		candidatesChangesTable = new JTable();
-		scrollPane_5.setViewportView(candidatesChangesTable);
+		conflictChangesTable = new JTable();
+		scrollPane_5.setViewportView(conflictChangesTable);
 
 		JPanel panel_24 = new JPanel();
 		scrollPane_5.setColumnHeaderView(panel_24);
@@ -307,7 +380,7 @@ public class DeployFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		cancleCandidateButton.setIcon(new ImageIcon(DeployFrame.class.getResource("/icons/cancel.png")));
+		cancleCandidateButton.setIcon(new ImageIcon(UI.class.getResource("/icons/cancel.png")));
 		panel_27.add(cancleCandidateButton);
 
 		JButton applyCandidateToSelectedStageButton = new JButton("");
@@ -315,7 +388,7 @@ public class DeployFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		applyCandidateToSelectedStageButton.setIcon(new ImageIcon(DeployFrame.class.getResource("/icons/accept.png")));
+		applyCandidateToSelectedStageButton.setIcon(new ImageIcon(UI.class.getResource("/icons/accept.png")));
 		panel_27.add(applyCandidateToSelectedStageButton);
 
 		JPanel panel_23 = new JPanel();
@@ -358,7 +431,7 @@ public class DeployFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		rollbackFromLSBButton.setIcon(new ImageIcon(DeployFrame.class.getResource("/icons/arrow_undo.png")));
+		rollbackFromLSBButton.setIcon(new ImageIcon(UI.class.getResource("/icons/arrow_undo.png")));
 		panel_28.add(rollbackFromLSBButton);
 
 		JButton proceedToNextButton = new JButton("");
@@ -366,7 +439,7 @@ public class DeployFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		proceedToNextButton.setIcon(new ImageIcon(DeployFrame.class.getResource("/icons/arrow_switch.png")));
+		proceedToNextButton.setIcon(new ImageIcon(UI.class.getResource("/icons/arrow_switch.png")));
 		panel_28.add(proceedToNextButton);
 
 		JButton mageNewLSBButton = new JButton("");
@@ -375,7 +448,7 @@ public class DeployFrame extends JFrame {
 			}
 		});
 		mageNewLSBButton.setToolTipText("Make LSB");
-		mageNewLSBButton.setIcon(new ImageIcon(DeployFrame.class.getResource("/icons/award_star_gold_2.png")));
+		mageNewLSBButton.setIcon(new ImageIcon(UI.class.getResource("/icons/award_star_gold_2.png")));
 		panel_28.add(mageNewLSBButton);
 
 		JPanel panel_29 = new JPanel();
@@ -389,6 +462,9 @@ public class DeployFrame extends JFrame {
 
 		deployHistoryTable = new JTable();
 		scrollPane_7.setViewportView(deployHistoryTable);
+
+		JPanel panel_32 = new JPanel();
+		tabbedPane.addTab("New tab", null, panel_32, null);
 
 		JPanel panel_1 = new JPanel();
 		contentPane.add(panel_1, BorderLayout.NORTH);
@@ -405,7 +481,7 @@ public class DeployFrame extends JFrame {
 		repositoryComboBox = new JComboBox();
 		repositoryComboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.repositorySelected(e);
+				controller.저장소가_선택됨();
 			}
 		});
 		repositoryComboBox.setMaximumRowCount(20);
@@ -417,7 +493,7 @@ public class DeployFrame extends JFrame {
 		branchComboBox = new JComboBox();
 		branchComboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.branchSelected(e);
+				controller.브랜치가_선택됨();
 			}
 		});
 		branchComboBox.setMaximumRowCount(20);
@@ -450,12 +526,12 @@ public class DeployFrame extends JFrame {
 		return candidatesDeploySetTable;
 	}
 
-	public JTable getDeploySetsChangesTable() {
-		return deploySetsChangesTable;
+	public JTable getCandidateChangesTable() {
+		return candidateChangesTable;
 	}
 
-	public JTable getCandidatesChangesTable() {
-		return candidatesChangesTable;
+	public JTable getConflictChangesTable() {
+		return conflictChangesTable;
 	}
 
 	public JList getStageList() {
@@ -474,7 +550,7 @@ public class DeployFrame extends JFrame {
 		return removeRequestButton;
 	}
 
-	public void setController(DeployController controller) {
+	public void setController(MainController controller) {
 		this.controller = controller;
 	}
 
@@ -484,5 +560,17 @@ public class DeployFrame extends JFrame {
 
 	public JComboBox getBranchComboBox() {
 		return branchComboBox;
+	}
+
+	public JTable getWorkingChangesTable() {
+		return workingChangesTable;
+	}
+
+	public JTabbedPane getTabbedPane() {
+		return tabbedPane;
+	}
+
+	public JTable getCandidateRequestTable() {
+		return candidateRequestTable;
 	}
 }

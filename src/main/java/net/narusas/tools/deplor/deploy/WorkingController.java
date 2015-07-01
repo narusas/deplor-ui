@@ -16,6 +16,7 @@ import javax.swing.table.TableColumnModel;
 
 import lombok.Getter;
 import net.narusas.tools.deplor.domain.model.Branch;
+import net.narusas.tools.deplor.domain.model.DeploySet;
 import net.narusas.tools.deplor.domain.model.DeploymentRequest;
 import net.narusas.tools.deplor.domain.repository.DeploymentRequestRepository;
 
@@ -40,32 +41,47 @@ public class WorkingController {
 	@Autowired
 	WorkingWorkingSetController	workingWorkingSetController;
 
-	DeployFrame					ui;
+	UI					ui;
+	MainController				parent;
 
-	public void setUI(DeployFrame ui) {
+	@Getter
+	DeploySet					previous;
+
+	public void setUI(UI ui) {
 		this.ui = ui;
-		workingRequestController.setUI(ui);
-		workingWorkingSetController.setUI(ui);
-		workingWorkingSetController.setParent(this);
+		workingRequestController.setup(ui, this);
+		workingWorkingSetController.setup(ui, this);
 	}
 
-	public void init() {
-
+	public void init(MainController parent) {
+		this.parent = parent;
 		workingRequestController.init();
 		workingWorkingSetController.init();
-	}
-
-	public void addToWorking() {
-		List<DeploymentRequest> request = workingRequestController.getSelectedDeploymentRequest();
-		System.out.println("## Add: " + request);
-		workingWorkingSetController.addToWorking(request);
 	}
 
 	public void updateBranch(Branch branch) {
 		workingRequestController.updateBranch(branch);
 	}
 
-	public void updateWorkingSets(DeploymentWorkingSet workingSet) {
-		workingWorkingSetController.updateWorkingSet(workingSet);
+	public void addToWorking() {
+		List<DeploymentRequest> request = workingRequestController.getSelectedDeploymentRequest();
+		workingWorkingSetController.clone(request);
+	}
+
+	public void removeRequestFromWorking() {
+		workingWorkingSetController.removeRequestFromWorking();
+	}
+
+	public List<DeploymentRequest> getWorkingSet() {
+		return workingWorkingSetController.getWorkingSet();
+	}
+
+	public void 선택된_배포후보의_내역을_작업목록으로_복사(DeploySet deploySet) {
+		previous = deploySet;
+		workingWorkingSetController.clone(deploySet.getRequests());
+	}
+
+	public void 배포요청_자동선택() {
+		workingRequestController.automaticSelect();
 	}
 }

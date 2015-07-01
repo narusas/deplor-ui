@@ -7,7 +7,7 @@ import net.narusas.tools.deplor.config.ApplicationConfig;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-public class DeployMain {
+public class Main {
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			@SuppressWarnings("resource")
@@ -15,8 +15,8 @@ public class DeployMain {
 			public void run() {
 				try {
 					ApplicationContext applicationContext = new AnnotationConfigApplicationContext(ApplicationConfig.class);
-					DeployController controller = applicationContext.getBean(DeployController.class);
-					DeployFrame frame = new DeployFrame();
+					MainController controller = applicationContext.getBean(MainController.class);
+					UI frame = new UI();
 					frame.setController(controller);
 					controller.setUI(frame);
 					controller.init();

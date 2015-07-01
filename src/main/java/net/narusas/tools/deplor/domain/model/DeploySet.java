@@ -1,10 +1,14 @@
 package net.narusas.tools.deplor.domain.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -19,6 +23,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import net.narusas.tools.deplor.domain.model.DeploySetStatus.DeploySetStatusConverter;
 
 @Entity
 @Table
@@ -43,13 +48,27 @@ public class DeploySet {
 			inverseJoinColumns = { @JoinColumn(name = "requestId") }
 	)
 	//@formatter:on
-	Set<DeploymentRequest>	requests;
+	List<DeploymentRequest>	requests;
+
+	@Column
+	@Convert(converter = DeploySetStatusConverter.class)
+	DeploySetStatus			status	= DeploySetStatus.미처리;
+
+	@JoinColumn(name = "previous")
+	DeploySet				previous;
 
 	public void addRequest(DeploymentRequest deploymentRequest) {
 		if (requests == null) {
-			requests = new HashSet<>();
+			requests = new ArrayList<>();
 		}
 		requests.add(deploymentRequest);
+	}
+
+	public void addRequest(Collection<DeploymentRequest> deploymentRequest) {
+		if (requests == null) {
+			requests = new ArrayList<>();
+		}
+		requests.addAll(deploymentRequest);
 	}
 
 	public Set<Change> getAllChanges() {

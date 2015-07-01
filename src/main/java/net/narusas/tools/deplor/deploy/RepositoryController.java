@@ -20,13 +20,13 @@ public class RepositoryController {
 	@Autowired
 	RepoRepository					repoRepository;
 
-	private DeployFrame				ui;
+	private UI				ui;
 	private RepositoryComboBoxModel	repositoryModel;
 
 	private BrancheComboBoxModel	branchModel;
-	private DeployController		parent;
+	private MainController		parent;
 
-	public void init(DeployController parent) {
+	public void init(MainController parent) {
 		this.parent = parent;
 		ui.getRepositoryComboBox().setModel(getRepositoryModel());
 		getRepositoryModel().refresh();
@@ -116,20 +116,20 @@ public class RepositoryController {
 		}
 	}
 
-	public void repositorySelected(ActionEvent e) {
+	public void repositorySelected() {
 		getBranchModel().update((RepositoryLabel) ui.getRepositoryComboBox().getSelectedItem());
 	}
 
-	public void branchSelected(ActionEvent e) {
+	public void branchSelected() {
 		BranchLabel branchLabel = (BranchLabel) ui.getBranchComboBox().getSelectedItem();
 		if (branchLabel == null) {
-			parent.updateBranch(null);
+			parent.선택된_브랜치로_변경(null);
 			return;
 		}
-		parent.updateBranch(branchLabel.getBranch());
+		parent.선택된_브랜치로_변경(branchLabel.getBranch());
 	}
 
-	public void setUI(DeployFrame ui) {
+	public void setUI(UI ui) {
 		this.ui = ui;
 
 	}

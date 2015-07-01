@@ -104,8 +104,10 @@ public class SvnCrowlerTest {
 		Branch branch = repo.getBranche("trunk");
 		System.out.println("######## " + branch);
 		long lastRevision = branch.getLastRevision();
+		System.out.println("#############:"+lastRevision);
 		Collection<SVNLogEntry> logs = crowler.getSvn().logs("/trunk", lastRevision);
 		for (SVNLogEntry svnLogEntry : logs) {
+			System.out.println(svnLogEntry);
 			lastRevision = svnLogEntry.getRevision();
 			String authorName = svnLogEntry.getAuthor();
 			Account account = repo.getAccount(authorName);

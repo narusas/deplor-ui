@@ -64,17 +64,17 @@ public class DeployTest {
 	
 	@Test
 	public void trial() {
-		Deployment dep = new Deployment();
-		
-		DeploySet set = deploySetRepository.findAll().get(0);
-		dep.setDeploySet(set);
-		
-		Stage stage = new Stage(StageType.DEV, branch);
-		dep.setStage(stage);
-		
-		
-		deploymentRepository.save(dep);
-		dep.run();
+//		Deployment dep = new Deployment();
+//		
+//		DeploySet set = deploySetRepository.findAll().get(0);
+//		dep.setDeploySet(set);
+//		
+//		Stage stage = new Stage(StageType.DEV, branch);
+//		dep.setStage(stage);
+//		
+//		
+//		deploymentRepository.save(dep);
+//		dep.run();
 		
 		
 	

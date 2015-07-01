@@ -1,4 +1,4 @@
-package net.narusas.tools.deplor.deploy;
+package net.narusas.tools.deplor.deploy.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +24,15 @@ public class DeploymentWorkingSet {
 				list.add(deploymentRequest);
 			}
 		}
+	}
+
+	public List<DeploymentRequest> removeAt(int[] toRemove) {
+		List<DeploymentRequest> remove = new ArrayList();
+		for (int i : toRemove) {
+			remove.add(list.get(i));
+		}
+		list.removeAll(remove);
+		return remove;
 	}
 
 }

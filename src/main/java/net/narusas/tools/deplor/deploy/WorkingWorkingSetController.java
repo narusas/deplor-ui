@@ -2,16 +2,23 @@ package net.narusas.tools.deplor.deploy;
 
 import static net.narusas.tools.deplor.deploy.UIUtil.col;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
 
+import net.narusas.tools.deplor.deploy.model.ChangesTableModel;
+import net.narusas.tools.deplor.deploy.model.CoreModel;
+import net.narusas.tools.deplor.deploy.model.RequestTableModel;
+import net.narusas.tools.deplor.domain.model.Change;
 import net.narusas.tools.deplor.domain.model.DeploymentRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,99 +30,80 @@ public class WorkingWorkingSetController {
 	@Autowired
 	CoreModel					coreModel;
 
-	DeployFrame					ui;
+	UI					ui;
 
-	WorkingSetTableModel		workingSetTableModel;
+	RequestTableModel			requestTableModel;
 
 	private WorkingController	parent;
 
-	public void setUI(DeployFrame ui) {
+	private ChangesTableModel	changesTableModel;
+
+	public void setup(UI ui, WorkingController workingController) {
 		this.ui = ui;
+		parent = workingController;
 	}
 
 	public void init() {
-		ui.getWorkingSetTable().setAutoCreateColumnsFromModel(false);
-		ui.getWorkingSetTable().setModel(getWorkingsetTableModel());
-		ui.getWorkingSetTable().setColumnModel(getWorkingsetTableColumnModel());
+		setupWorkingSetTable();
+		setupWorkingChangesTable();
+	}
 
-		getWorkingsetTableModel().addTableModelListener(new TableModelListener() {
+	private void setupWorkingSetTable() {
+		ui.getWorkingSetTable().setAutoCreateColumnsFromModel(false);
+		ui.getWorkingSetTable().setModel(getRequestTableModel());
+		ui.getWorkingSetTable().setColumnModel(getRequestTableModel().getColModel());
+		ui.getWorkingSetTable().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
 			@Override
-			public void tableChanged(TableModelEvent e) {
-				parent.updateWorkingSets(coreModel.getWorkingSet());
+			public void valueChanged(ListSelectionEvent e) {
+				workingsetSelected(ui.getWorkingSetTable().getSelectedRows());
 			}
 		});
 	}
 
-	private WorkingSetTableModel getWorkingsetTableModel() {
-		if (workingSetTableModel != null) {
-			return workingSetTableModel;
-		}
-		workingSetTableModel = new WorkingSetTableModel(coreModel.workingSet);
-		return workingSetTableModel;
+	private void setupWorkingChangesTable() {
+		ui.getWorkingChangesTable().setAutoCreateColumnsFromModel(false);
+		ui.getWorkingChangesTable().setModel(getChangeTableModel());
+		ui.getWorkingChangesTable().setColumnModel(getChangeTableModel().getColModel());
 	}
 
-	private WorkingSetTableColumnModel getWorkingsetTableColumnModel() {
-		return new WorkingSetTableColumnModel();
+	private RequestTableModel getRequestTableModel() {
+		if (requestTableModel != null) {
+			return requestTableModel;
+		}
+		requestTableModel = new RequestTableModel();
+		return requestTableModel;
 	}
 
-	public void addToWorking(List<DeploymentRequest> request) {
-		getWorkingsetTableModel().addRequests(request);
+	private ChangesTableModel getChangeTableModel() {
+		if (changesTableModel != null) {
+			return changesTableModel;
+		}
+		changesTableModel = new ChangesTableModel();
+		return changesTableModel;
 	}
 
-	class WorkingSetTableModel extends AbstractTableModel {
-
-		private DeploymentWorkingSet	workingSet;
-
-		public WorkingSetTableModel(DeploymentWorkingSet workingSet) {
-			this.workingSet = workingSet;
-		}
-
-		public void addRequests(List<DeploymentRequest> request) {
-			workingSet.add(request);
-			fireTableDataChanged();
-		}
-
-		@Override
-		public int getRowCount() {
-			return workingSet.size();
-		}
-
-		@Override
-		public Object getValueAt(int row, int column) {
-			switch (column) {
-			case 0:
-				return workingSet.get(row).getId();
-			case 1:
-				return workingSet.get(row).getStatus();
-			case 2:
-				return workingSet.get(row).getAuthor().getName();
-			case 3:
-				return new DateLabel(workingSet.get(row).getTimestamp());
-			}
-			return null;
-		}
-
-		@Override
-		public int getColumnCount() {
-			return 4;
+	protected void workingsetSelected(int[] selectedRows) {
+		getChangeTableModel().clear();
+		List<DeploymentRequest> list = getRequestTableModel().getSelectedRequest(selectedRows);
+		for (DeploymentRequest deploymentRequest : list) {
+			getChangeTableModel().add(deploymentRequest.getChanges());
 		}
 	}
 
-	class WorkingSetTableColumnModel extends DefaultTableColumnModel {
-		public WorkingSetTableColumnModel() {
-			addColumn(col(0, 50, "ID"));
-			addColumn(col(1, 50, "Status"));
-			addColumn(col(2, 70, "Author"));
-			addColumn(col(3, "Time"));
+	public void removeRequestFromWorking() {
+		int[] toRemove = ui.getWorkingSetTable().getSelectedRows();
+		List<DeploymentRequest> removed = getRequestTableModel().removeRequestAt(toRemove);
+		for (DeploymentRequest deploymentRequest : removed) {
+			getChangeTableModel().remove(deploymentRequest.getChanges());
 		}
 	}
 
-	public void setParent(WorkingController workingController) {
-		this.parent = workingController;
+	public List<DeploymentRequest> getWorkingSet() {
+		return Collections.unmodifiableList(getRequestTableModel().getRequests());
 	}
 
-	public void updateWorkingSet(DeploymentWorkingSet workingSet) {
-
+	public void clone(List<DeploymentRequest> requests) {
+		getRequestTableModel().updateRequests(requests);
 	}
-
 }

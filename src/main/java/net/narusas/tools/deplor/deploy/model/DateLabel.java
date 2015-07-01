@@ -1,4 +1,4 @@
-package net.narusas.tools.deplor.deploy;
+package net.narusas.tools.deplor.deploy.model;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

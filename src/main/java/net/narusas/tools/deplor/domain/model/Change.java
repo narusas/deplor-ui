@@ -20,8 +20,8 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = { "revision", "resource" })
-@ToString(exclude = { "revision", "resource" })
+@EqualsAndHashCode(of = "id")
+@ToString(of = "id")
 public class Change {
 
 	@Id

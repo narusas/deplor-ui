@@ -1,63 +1,43 @@
 package net.narusas.tools.deplor.deploy;
 
-import java.awt.event.ActionEvent;
-import java.util.List;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import net.narusas.tools.deplor.domain.model.Branch;
-import net.narusas.tools.deplor.domain.model.Repository;
-import net.narusas.tools.deplor.domain.repository.RepoRepository;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import net.narusas.tools.deplor.deploy.model.ChangesTableModel;
+import net.narusas.tools.deplor.deploy.model.DeploySetTableModel;
+import net.narusas.tools.deplor.domain.model.DeploySet;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 
-/**
- * 최상위 컨트롤러
- * 
- * @author narusas
- *
- */
 @Controller
+@Slf4j
+@Data
 public class DeployController {
 
 	@Autowired
-	RepositoryController	repositoryController;
+	DeployCandidateController	deployCandidateController;
 
-	@Autowired
-	WorkingController		workingController;
+	UI							ui;
 
-	private DeployFrame		ui;
+	MainController				parent;
 
-	public void setUI(DeployFrame ui) {
-		this.ui = ui;
-		repositoryController.setUI(ui);
-		workingController.setUI(ui);
+	public void 초기화(MainController mainController) {
+		this.parent = mainController;
+		deployCandidateController.setUi(ui);
+		deployCandidateController.초기화(this);
+
 	}
 
-	public void init() {
-		repositoryController.init(this);
-		workingController.init();
+	public void 후보_배포셋_갱신() {
+		deployCandidateController.후보_배포셋_갱신();
 	}
 
-	public void repositorySelected(ActionEvent e) {
-		repositoryController.repositorySelected(e);
-	}
-
-	public void branchSelected(ActionEvent e) {
-		repositoryController.branchSelected(e);
-	}
-
-	public void updateBranch(Branch branch) {
-		workingController.updateBranch(branch);
-	}
-
-	public void addToWorking() {
-		workingController.addToWorking();
+	public DeploySet getSelectedDeploySet() {
+		return deployCandidateController.getSelectedDeploySet();
 	}
 
 }
