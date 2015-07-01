@@ -422,14 +422,20 @@ public class DeplorControllerImpl implements DeplorController {
             addColumn(col(0, 140, "Revision"));
             addColumn(col(1, 70, "Type"));
             addColumn(col(2, 70, "Owner"));
-            addColumn(col(3, 350, "Path"));
-            addColumn(col(4, "Branch"));
+            addColumn(col(3, 140, "Branch"));
+            addColumn(col(4, "Path"));
         }
     }
 
     class ChangeListModel extends AbstractTableModel {
 
         List<Change> changeList = new ArrayList<>();
+
+
+        public Change getChangeAtRow(int selectedRow) {
+
+            return changeList.get(selectedRow);
+        }
 
 
         private void updateChange(Revision selectedRevision) {
@@ -467,9 +473,9 @@ public class DeplorControllerImpl implements DeplorController {
                 case 2:
                     return changeList.get(rowIndex).getRevision().getAuthor().getName();
                 case 3:
-                    return changeList.get(rowIndex).getPath();
-                case 4:
                     return changeList.get(rowIndex).getRevision().getBranch().getName();
+                case 4:
+                    return changeList.get(rowIndex).getPath();
 
             }
             return null;
@@ -488,9 +494,17 @@ public class DeplorControllerImpl implements DeplorController {
     @Override
     public void eventAddRequestList() {
 
-        ui.getRequestListTable().getSelectedRow();
 
-        // XXX this.requestTableModel.addChange(this.changeListModel.getValueAt(ui.getRequestListTable().getSelectedRow()));
+        this.requestTableModel.addChange(this.changeListModel.getChangeAtRow(ui.getChangeListTable().getSelectedRow()));
+
+        // this.requestTableModel.addChange(changeListModel.getValueAt(rowIndex, columnIndex));
+
+
+        System.out.println(" >>>>>> " + this.changeListModel.changeList);
+
+        // getRequestTableModel().addChange(getChangedTableModel().getChangeAtRow(this.changeList.getSelectedRow()));
+
+
     }
 
 
@@ -507,8 +521,8 @@ public class DeplorControllerImpl implements DeplorController {
             addColumn(col(0, 140, "Revision"));
             addColumn(col(1, 70, "Type"));
             addColumn(col(2, 70, "Owner"));
-            addColumn(col(3, 350, "Path"));
-            addColumn(col(4, "Branch"));
+            addColumn(col(3, 140, "Branch"));
+            addColumn(col(4, "Path"));
         }
     }
 
@@ -525,6 +539,8 @@ public class DeplorControllerImpl implements DeplorController {
 
 
         public void addChange(Change changeAtRow) {
+
+
 
             changes.add(changeAtRow);
             fireTableDataChanged();
@@ -553,9 +569,9 @@ public class DeplorControllerImpl implements DeplorController {
                 case 2:
                     return "Owner";
                 case 3:
-                    return changes.get(rowIndex).getPath();
-                case 4:
                     return changes.get(rowIndex).getId(); // branch
+                case 4:
+                    return changes.get(rowIndex).getPath();
 
             }
 
@@ -592,7 +608,6 @@ public class DeplorControllerImpl implements DeplorController {
                     return "Path";
                 case 4:
                     return "Branch";
-
             }
             return null;
         }
