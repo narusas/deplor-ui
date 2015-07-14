@@ -1,6 +1,5 @@
 package net.narusas.tools.deplor.domain.model;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,36 +14,31 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "resources")
+@Table(name = "deployedResource")
+@NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = { "repository" })
-@ToString(exclude = { "repository" })
-@NoArgsConstructor
-public class Resource {
+@EqualsAndHashCode(of = "id")
+@ToString(of = "id")
+public class DeployedResource {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long		id;
 
-	@JoinColumn(name = "repository")
-	Repository	repository;
-
 	@JoinColumn(name = "branch")
 	Branch		branch;
 
-	@JoinColumn(name = "latestChange")
-	Change		latestChange;
+	@JoinColumn(name = "resource")
+	Resource	resource;
 
-	@Column
-	String		type;
+	@JoinColumn(name = "change_id")
+	Change		change;
 
-	@Column
-	String		path;
-
-	public Resource(Repository repo, Branch branch, String shortPath) {
-		this.repository = repo;
+	public DeployedResource(Branch branch, Resource resource, Change change) {
 		this.branch = branch;
-		this.path = shortPath;
+		this.resource = resource;
+		this.change = change;
 	}
 
 }

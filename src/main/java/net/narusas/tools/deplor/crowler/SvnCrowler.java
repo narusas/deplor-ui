@@ -2,6 +2,8 @@ package net.narusas.tools.deplor.crowler;
 
 import java.util.List;
 
+import javax.swing.SwingWorker;
+
 import lombok.Data;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,4 +72,17 @@ public class SvnCrowler {
 		}
 		return false;
 	}
+
+	public void crowling(Branch branch, CrowlingListener listener) {
+
+	}
+}
+
+class CrowlingThread extends SwingWorker {
+
+	@Override
+	protected Object doInBackground() throws Exception {
+		return null;
+	}
+
 }

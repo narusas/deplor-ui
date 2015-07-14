@@ -104,8 +104,8 @@ public class JpaConfig {
         org.apache.tomcat.jdbc.pool.DataSource ds = new org.apache.tomcat.jdbc.pool.DataSource();
         ds.setDriverClassName("com.mysql.jdbc.Driver");
         ds.setUrl("jdbc:mysql://localhost:3306/deplor?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull");
-        ds.setUsername("root");
-        ds.setPassword("");
+        ds.setUsername("deplor");
+        ds.setPassword("deplor");
         ds.setInitSQL("select 1");
         ds.setMaxActive(400);
         ds.setValidationQuery("select 1");

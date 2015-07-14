@@ -502,7 +502,14 @@ public class UI extends JFrame {
 		JPanel panel_3 = new JPanel();
 		panel_1.add(panel_3, BorderLayout.EAST);
 
-		JButton btnNewButton = new JButton("New Deploy Set");
+		JButton btnNewButton = new JButton("Flush LSB");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.LSB_신규생성();
+			}
+		});
+		btnNewButton.setToolTipText("Flush LSB and create from current branch HEAD");
+		btnNewButton.setIcon(new ImageIcon(UI.class.getResource("/icons/rosette.png")));
 		panel_3.add(btnNewButton);
 	}
 

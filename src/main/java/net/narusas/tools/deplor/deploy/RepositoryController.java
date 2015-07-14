@@ -8,23 +8,35 @@ import javax.swing.SwingUtilities;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.narusas.tools.deplor.domain.model.Branch;
 import net.narusas.tools.deplor.domain.model.Repository;
 import net.narusas.tools.deplor.domain.repository.RepoRepository;
+import net.narusas.tools.deplor.domain.service.LsbService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 @Controller
+@Slf4j
 public class RepositoryController {
 	@Autowired
 	RepoRepository					repoRepository;
 
-	private UI				ui;
+	@Autowired
+	LsbService						lsbService;
+
+	private UI						ui;
 	private RepositoryComboBoxModel	repositoryModel;
 
 	private BrancheComboBoxModel	branchModel;
-	private MainController		parent;
+	private MainController			parent;
+
+	private Branch	selectedBranch;
+
+	public void setUI(UI ui) {
+		this.ui = ui;
+	}
 
 	public void init(MainController parent) {
 		this.parent = parent;
@@ -116,22 +128,24 @@ public class RepositoryController {
 		}
 	}
 
-	public void repositorySelected() {
+	public void 저장소_선택됨() {
 		getBranchModel().update((RepositoryLabel) ui.getRepositoryComboBox().getSelectedItem());
 	}
 
-	public void branchSelected() {
+	public void 브랜치_선택됨() {
 		BranchLabel branchLabel = (BranchLabel) ui.getBranchComboBox().getSelectedItem();
 		if (branchLabel == null) {
 			parent.선택된_브랜치로_변경(null);
 			return;
 		}
+		this.selectedBranch = branchLabel.getBranch();
 		parent.선택된_브랜치로_변경(branchLabel.getBranch());
 	}
 
-	public void setUI(UI ui) {
-		this.ui = ui;
-
+	public void LSB_신규생성() {
+		log.info("LSB_신규생성");
+		lsbService.LSB_신규생성(selectedBranch);
+		
 	}
 
 }

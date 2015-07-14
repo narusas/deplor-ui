@@ -4,6 +4,9 @@ import java.awt.event.ActionEvent;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+
 import net.narusas.tools.deplor.domain.model.Branch;
 import net.narusas.tools.deplor.domain.model.DeploySet;
 import net.narusas.tools.deplor.domain.model.DeploymentRequest;
@@ -33,7 +36,7 @@ public class MainController {
 	@Autowired
 	DeploySetRepository		deploySetRepository;
 
-	private UI		ui;
+	private UI				ui;
 
 	public void setUI(UI ui) {
 		this.ui = ui;
@@ -49,11 +52,11 @@ public class MainController {
 	}
 
 	public void 저장소가_선택됨() {
-		repositoryController.repositorySelected();
+		repositoryController.저장소_선택됨();
 	}
 
 	public void 브랜치가_선택됨() {
-		repositoryController.branchSelected();
+		repositoryController.브랜치_선택됨();
 	}
 
 	public void 선택된_브랜치로_변경(Branch branch) {
@@ -107,5 +110,14 @@ public class MainController {
 
 	public void 배포요청_자동선택() {
 		workingController.배포요청_자동선택();
+	}
+
+	public void LSB_신규생성() {
+		Object[] options = { "YES", "No" };
+		int n = JOptionPane.showOptionDialog(ui, "현재  LSB 를 제거하고 선택된 브랜치의  HEAD 를 이용해 새로운  LSB 를 생성하겠습니다.", "확인",
+				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+		if (n == 0) {
+			repositoryController.LSB_신규생성();
+		}
 	}
 }

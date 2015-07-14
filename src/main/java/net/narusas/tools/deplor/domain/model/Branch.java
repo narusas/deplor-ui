@@ -15,6 +15,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
+import org.eclipse.persistence.annotations.BatchFetch;
+import org.eclipse.persistence.annotations.BatchFetchType;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,7 +45,11 @@ public class Branch {
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "branch", cascade = { CascadeType.ALL })
 	@OrderBy("timestamp")
+	@BatchFetch(BatchFetchType.IN)
 	List<Revision>	revisions;
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "branch", cascade = { CascadeType.ALL })
+	List<Stage>		stage;
 
 	public void addRevision(Revision revision) {
 		if (revisions == null) {
@@ -50,5 +57,18 @@ public class Branch {
 		}
 		revisions.add(revision);
 		revision.setBranch(this);
+	}
+
+	public Stage getStage(String name) {
+		for (Stage s : stage) {
+			if (name.equals(s.getName())) {
+				return s;
+			}
+		}
+		Stage addstage = new Stage();
+		addstage.setName(name);
+		addstage.setBranch(this);
+		stage.add(addstage);
+		return addstage;
 	}
 }

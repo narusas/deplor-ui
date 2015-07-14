@@ -96,6 +96,9 @@ public class SvnCrowlerTest {
 
 	@Test
 	public void branchHistory() {
+
+		// TODO 지워진 파일 처리가 필요함
+
 		TransactionDefinition def = new DefaultTransactionDefinition();
 		TransactionStatus status = txManager.getTransaction(def);
 		Repository repo = repoRepository.findAll().get(0);
@@ -104,7 +107,7 @@ public class SvnCrowlerTest {
 		Branch branch = repo.getBranche("trunk");
 		System.out.println("######## " + branch);
 		long lastRevision = branch.getLastRevision();
-		System.out.println("#############:"+lastRevision);
+		System.out.println("#############:" + lastRevision);
 		Collection<SVNLogEntry> logs = crowler.getSvn().logs("/trunk", lastRevision);
 		for (SVNLogEntry svnLogEntry : logs) {
 			System.out.println(svnLogEntry);
@@ -115,7 +118,7 @@ public class SvnCrowlerTest {
 				account = accountRepository.save(new Account(repo, authorName));
 				repo.addAccount(account);
 			}
-			Revision revision = revisionRepository.save(Revision.from(svnLogEntry, account));
+			Revision revision = revisionRepository.save(Revision.from(branch, svnLogEntry, account));
 			Collection<SVNLogEntryPath> paths = svnLogEntry.getChangedPaths().values();
 			for (SVNLogEntryPath path : paths) {
 				if (path.getKind() != SVNNodeKind.FILE) {
@@ -125,9 +128,12 @@ public class SvnCrowlerTest {
 				String shortPath = fullPath.replaceFirst("/" + branch.getName(), "");
 				Resource resource = resourceRepository.findByPathAndRepository(shortPath, repo);
 				if (resource == null) {
-					resource = resourceRepository.save(new Resource(repo, shortPath));
+					resource = resourceRepository.save(new Resource(repo, branch, shortPath));
 				}
 				Change change = changeRepository.save(new Change(resource, shortPath, String.valueOf(path.getType())));
+				resource.setLatestChange(change);
+				resource.setType(String.valueOf(path.getType()));
+
 				revision.addChange(change);
 				revision.setAuthor(account);
 				branch.addRevision(revision);

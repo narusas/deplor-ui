@@ -20,6 +20,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import org.eclipse.persistence.annotations.BatchFetch;
+import org.eclipse.persistence.annotations.BatchFetchType;
 import org.tmatesoft.svn.core.SVNLogEntry;
 
 @Entity
@@ -52,10 +54,12 @@ public class Revision {
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "revision")
 	@OrderBy("path")
+	@BatchFetch(BatchFetchType.IN)
 	List<Change>	changes;
 
-	public Revision(long version, Date timestamp, Account author, String message) {
+	public Revision(Branch branch, long version, Date timestamp, Account author, String message) {
 
+		this.branch = branch;
 		this.version = version;
 		this.timestamp = timestamp;
 		this.author = author;
@@ -71,9 +75,9 @@ public class Revision {
 		change.setRevision(this);
 	}
 
-	public static Revision from(SVNLogEntry svnLogEntry, Account account) {
+	public static Revision from(Branch branch, SVNLogEntry svnLogEntry, Account account) {
 
-		return new Revision(svnLogEntry.getRevision(), svnLogEntry.getDate(), account, svnLogEntry.getMessage());
+		return new Revision(branch, svnLogEntry.getRevision(), svnLogEntry.getDate(), account, svnLogEntry.getMessage());
 	}
 
 	@Override

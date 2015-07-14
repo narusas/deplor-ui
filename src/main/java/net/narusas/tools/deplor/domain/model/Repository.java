@@ -21,6 +21,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.persistence.annotations.BatchFetch;
+import org.eclipse.persistence.annotations.BatchFetchType;
 
 @Entity
 @Table
@@ -54,6 +56,7 @@ public class Repository {
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "repository")
 	@OrderBy("name")
+	@BatchFetch(BatchFetchType.IN)
 	List<Branch>			branches;
 
 	public Branch getBranche(String name) {
