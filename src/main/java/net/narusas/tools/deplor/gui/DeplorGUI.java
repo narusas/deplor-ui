@@ -48,6 +48,7 @@ public class DeplorGUI extends JFrame {
     private JList revisionList;
     private JTextArea infoRevisionTextArea;
     private JButton btnAdd;
+    private JButton btnClear;
 
 
     /**
@@ -153,6 +154,7 @@ public class DeplorGUI extends JFrame {
         panel_7.add(scrollPane_1, BorderLayout.CENTER);
 
         changeListTable = new JTable();
+        changeListTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         scrollPane_1.setViewportView(changeListTable);
 
         JPanel panel_8 = new JPanel();
@@ -171,6 +173,18 @@ public class DeplorGUI extends JFrame {
         btnAdd.setIcon(new ImageIcon(DeplorGUI.class.getResource("/icons/add.png")));
         btnAdd.setSelectedIcon(new ImageIcon(DeplorGUI.class.getResource("/icons/application_put.png")));
         panel_8.add(btnAdd);
+
+        btnClear = new JButton("clear");
+        btnClear.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+                dController.eventClearList();
+            }
+        });
+        btnClear.setIcon(new ImageIcon(DeplorGUI.class.getResource("/icons/cancel.png")));
+        panel_8.add(btnClear);
 
         JPanel panel_9 = new JPanel();
         panel_9.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Deploy List", TitledBorder.LEADING,
@@ -352,5 +366,11 @@ public class DeplorGUI extends JFrame {
     public JTable getRequestListTable() {
 
         return requestListTable;
+    }
+
+
+    public JButton getBtnClear() {
+
+        return btnClear;
     }
 }

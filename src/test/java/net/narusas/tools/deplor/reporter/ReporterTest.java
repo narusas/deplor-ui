@@ -1,53 +1,54 @@
-//package net.narusas.tools.deplor.reporter;
-//
-//
-//import static org.junit.Assert.assertNotNull;
-//
-//import java.util.Date;
-//import java.util.List;
-//
-//import lombok.extern.slf4j.Slf4j;
-//import net.narusas.tools.deplor.config.ApplicationConfig;
-//import net.narusas.tools.deplor.domain.model.Account;
-//import net.narusas.tools.deplor.domain.model.Branch;
-//import net.narusas.tools.deplor.domain.model.Change;
-//import net.narusas.tools.deplor.domain.model.DeploymentRequest;
-//import net.narusas.tools.deplor.domain.model.DeploymentStatus;
-//import net.narusas.tools.deplor.domain.model.Repository;
-//import net.narusas.tools.deplor.domain.model.Revision;
-//import net.narusas.tools.deplor.domain.model.User;
-//import net.narusas.tools.deplor.domain.repository.AccountRepository;
-//import net.narusas.tools.deplor.domain.repository.DeploymentRequestRepository;
-//import net.narusas.tools.deplor.domain.repository.RepoRepository;
-//import net.narusas.tools.deplor.domain.repository.RevisionRepository;
-//import net.narusas.tools.deplor.domain.repository.UserRepository;
-//
-//import org.junit.Test;
-//import org.junit.runner.RunWith;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.test.context.ContextConfiguration;
-//import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-//import org.springframework.test.context.support.AnnotationConfigContextLoader;
-//
-//@RunWith(SpringJUnit4ClassRunner.class)
-//@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {ApplicationConfig.class})
-//@Slf4j
-//public class ReporterTest {
-//
-//    @Autowired RepoRepository repoRepository;
-//
-//    @Autowired RevisionRepository revisionRepository;
-//
-//    @Autowired DeploymentRequestRepository deploymentRepository;
-//
-//    @Autowired AccountRepository accountRepository;
-//
-//    @Autowired UserRepository userRepository;
-//
-//
-//    @Test
-//    public void createDeploymentRequest() {
-//
+package net.narusas.tools.deplor.reporter;
+
+
+import static org.junit.Assert.assertNotNull;
+
+import java.util.Date;
+import java.util.List;
+
+import lombok.extern.slf4j.Slf4j;
+import net.narusas.tools.deplor.config.ApplicationConfig;
+import net.narusas.tools.deplor.domain.model.Account;
+import net.narusas.tools.deplor.domain.model.Branch;
+import net.narusas.tools.deplor.domain.model.Change;
+import net.narusas.tools.deplor.domain.model.DeploymentRequest;
+import net.narusas.tools.deplor.domain.model.DeploymentStatus;
+import net.narusas.tools.deplor.domain.model.Repository;
+import net.narusas.tools.deplor.domain.model.Revision;
+import net.narusas.tools.deplor.domain.model.User;
+import net.narusas.tools.deplor.domain.repository.AccountRepository;
+import net.narusas.tools.deplor.domain.repository.DeploymentRequestRepository;
+import net.narusas.tools.deplor.domain.repository.RepoRepository;
+import net.narusas.tools.deplor.domain.repository.RevisionRepository;
+import net.narusas.tools.deplor.domain.repository.UserRepository;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {ApplicationConfig.class})
+@Slf4j
+public class ReporterTest {
+
+    @Autowired RepoRepository repoRepository;
+
+    @Autowired RevisionRepository revisionRepository;
+
+    @Autowired DeploymentRequestRepository deploymentRepository;
+
+    @Autowired AccountRepository accountRepository;
+
+    @Autowired UserRepository userRepository;
+
+
+    @Test
+    public void createDeploymentRequest() {
+
+>>>>>>> a70520e1d8e877c5858a7b24cacac5c6e400ae6c
 //        Repository repo = repoRepository.findAll().get(0);
 //        Branch branch = repo.getBranche("trunk");
 //
@@ -72,6 +73,7 @@
 //        request.setTimestamp(new Date());
 //        request.setStatus(DeploymentStatus.제출됨);
 //        deploymentRepository.save(request);
+<<<<<<< HEAD
 //    }
 //
 //
@@ -90,12 +92,33 @@
 //    @Test
 //    public void getRequestHistory() {
 //
+=======
+    }
+
+
+    @Test
+    public void getOldOne() {
+
+        DeploymentRequest request = deploymentRepository.findOne(1L);
+        assertNotNull(request);
+        System.out.println(request);
+        for (Change change : request.getChanges()) {
+            System.out.println(change);
+        }
+    }
+
+
+    @Test
+    public void getRequestHistory() {
+
+>>>>>>> a70520e1d8e877c5858a7b24cacac5c6e400ae6c
 //        Account account = accountRepository.findOneByName("jsan");
 //        List<DeploymentRequest> requests = deploymentRepository.findByAuthorOrderByTimestamp(account);
 //        assertNotNull(requests);
 //        for (DeploymentRequest deploymentRequest : requests) {
 //            System.out.println("###" + deploymentRequest);
 //        }
+<<<<<<< HEAD
 //    }
 //
 //
@@ -108,3 +131,17 @@
 //    }
 //
 // }
+=======
+    }
+
+
+    @Test
+    public void testUser() {
+
+        User user = userRepository.findOneByName("Jisung, Ahn");
+        assertNotNull(user);
+        System.out.println("######" + user);
+    }
+
+}
+>>>>>>> a70520e1d8e877c5858a7b24cacac5c6e400ae6c

@@ -541,8 +541,41 @@ public class DeplorControllerImpl implements DeplorController {
         public void addChange(Change changeAtRow) {
 
 
+            System.out.println(" >>>>> 11 : " + changeAtRow);
+            System.out.println(" >>>>> 22 : " + this.changes);
 
-            changes.add(changeAtRow);
+
+
+            if (this.changes.size() > 0) {
+                // Check duplication
+                for (Change change : changes) {
+                    if (changeAtRow.getId() == null || change.getId() == null) {
+                        System.out.println(" STEP 01  ");
+                        continue;
+                    }
+                    System.out.println(" STEP 02-1  : " + change.getId());
+
+                    System.out.println(" STEP 02-2  : " + changeAtRow.getId());
+
+
+
+                    if (change.getId() == changeAtRow.getId()) {
+                        System.out.println(" STEP 03  ");
+                        changes.add(changeAtRow);
+
+                    }
+                }
+
+            } else {
+                changes.add(changeAtRow);
+                System.out.println(" STEP 04  ");
+            }
+
+
+
+            System.out.println(" STEP 05  ");
+
+
             fireTableDataChanged();
         }
 
@@ -587,6 +620,15 @@ public class DeplorControllerImpl implements DeplorController {
         }
 
 
+        public void setRemove() {
+
+            System.out.println(" ##### " + changes.toString());
+            changes.clear();
+
+
+        }
+
+
         @Override
         public int getColumnCount() {
 
@@ -615,6 +657,18 @@ public class DeplorControllerImpl implements DeplorController {
 
     }
 
+
+
+    /**
+     * Clear request list
+     */
+    @Override
+    public void eventClearList() {
+
+        this.requestTableModel.setRemove();
+        this.requestTableModel.fireTableChanged(null);
+
+    }
     /**
      * process : submit deploy
      */

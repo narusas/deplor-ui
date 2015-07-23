@@ -59,6 +59,8 @@ public interface DeplorController {
 
     void eventAddRequestList();
 
+
+    void eventClearList();
     /**
      * process : submit deploy
      */
