@@ -48,6 +48,7 @@ public class ReporterTest {
     @Test
     public void createDeploymentRequest() {
 
+>>>>>>> a70520e1d8e877c5858a7b24cacac5c6e400ae6c
 //        Repository repo = repoRepository.findAll().get(0);
 //        Branch branch = repo.getBranche("trunk");
 //
@@ -72,6 +73,26 @@ public class ReporterTest {
 //        request.setTimestamp(new Date());
 //        request.setStatus(DeploymentStatus.제출됨);
 //        deploymentRepository.save(request);
+<<<<<<< HEAD
+//    }
+//
+//
+//    @Test
+//    public void getOldOne() {
+//
+//        DeploymentRequest request = deploymentRepository.findOne(1L);
+//        assertNotNull(request);
+//        System.out.println(request);
+//        for (Change change : request.getChanges()) {
+//            System.out.println(change);
+//        }
+//    }
+//
+//
+//    @Test
+//    public void getRequestHistory() {
+//
+=======
     }
 
 
@@ -90,12 +111,27 @@ public class ReporterTest {
     @Test
     public void getRequestHistory() {
 
+>>>>>>> a70520e1d8e877c5858a7b24cacac5c6e400ae6c
 //        Account account = accountRepository.findOneByName("jsan");
 //        List<DeploymentRequest> requests = deploymentRepository.findByAuthorOrderByTimestamp(account);
 //        assertNotNull(requests);
 //        for (DeploymentRequest deploymentRequest : requests) {
 //            System.out.println("###" + deploymentRequest);
 //        }
+<<<<<<< HEAD
+//    }
+//
+//
+//    @Test
+//    public void testUser() {
+//
+//        User user = userRepository.findOneByName("Jisung, Ahn");
+//        assertNotNull(user);
+//        System.out.println("######" + user);
+//    }
+//
+// }
+=======
     }
 
 
@@ -108,3 +144,4 @@ public class ReporterTest {
     }
 
 }
+>>>>>>> a70520e1d8e877c5858a7b24cacac5c6e400ae6c
